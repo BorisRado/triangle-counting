@@ -14,9 +14,19 @@ public class Tester {
             ArrayList<Integer>[] graph = GraphManager.readGraph(fileName, 1, false);
             GraphManager.writeGraph(graph, "/home/boris/ina/tmp.net", false);
             Set<Integer>[] graphSet = GraphManager.toSetRepresentation(graph);
-            int[][] graphArray = GraphManager.toArrayRepresentation(graph);
-            for (int i = 0; i < graphArray.length; i++)
-                System.out.println(i + ": " + Arrays.toString(graphArray[i]));
+            int[][] graphArray = GraphManager.toArrayRepresentation(graph, true);
+           
+            boolean[][] adjMatrix = GraphManager.toAdjacencyMatrix(graph);
+            
+            // test naive search
+            long tc = TriangleCounter.naiveSearch(graphSet);
+            System.out.println("Number of triangles (naive search) " + tc);
+            
+            // test approach with adjecency matrix
+            tc = TriangleCounter.adjMatrixCounting(adjMatrix);
+            System.out.println("Number of triangles (search with adjacency matrix): " + tc);
+            
+
         } catch (IOException e) {
             e.printStackTrace();
         }

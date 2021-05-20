@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -76,10 +77,13 @@ public class GraphManager {
         return setGraph;
     }
     
-    public static int[][] toArrayRepresentation(ArrayList<Integer>[] graph){
+    public static int[][] toArrayRepresentation(ArrayList<Integer>[] graph, boolean sort){
         int[][] arrayGraph = new int[graph.length][];
         for (int node = 0; node < graph.length; node++) {
             ArrayList<Integer> nodeNeighbors = graph[node];
+            if (sort)
+                Collections.sort(nodeNeighbors);
+            
             arrayGraph[node] = new int[nodeNeighbors.size()];            
             for (int destNodeInd = 0; destNodeInd < nodeNeighbors.size(); destNodeInd++) {
                 arrayGraph[node][destNodeInd] = nodeNeighbors.get(destNodeInd).intValue();
@@ -87,5 +91,17 @@ public class GraphManager {
         }
         return arrayGraph;
     }
-
+    
+    public static boolean[][] toAdjacencyMatrix(ArrayList<Integer>[] graph) {
+        boolean[][] adjacencyMatrix = new boolean[graph.length][graph.length];
+        for (int i = 0; i < graph.length; i++) {
+            for(Integer dstNode: graph[i]) {
+                if (dstNode > i) {
+                    adjacencyMatrix[i][dstNode] = true;
+                    adjacencyMatrix[dstNode][i] = true;
+                }
+            }
+        }
+        return adjacencyMatrix;
+    }
 }
