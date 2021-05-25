@@ -87,4 +87,16 @@ public class TriangleCounter {
         }
         return triangleCount;
     }
+
+    public static long cycleCounting(boolean[][] adjMatrix) {
+        // TODO
+        // See http://www.math.tau.ac.il/~nogaa/PDFS/ayz4.pdf (Section 6)
+        // For 3-cycles the formula is simply trace(A)/6
+        long triangleCount = 0;
+        long[][] A3 = new long[1][1]; // TODO - A3 = adjMatrix to the power 3 - Apache Commons Math library?
+        for (int i = 0; i < A3.length; i++) {
+            triangleCount += A3[i][i];
+        }
+        return triangleCount / 6;
+    }
 }
