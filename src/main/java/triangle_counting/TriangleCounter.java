@@ -65,10 +65,23 @@ public class TriangleCounter {
         // TO-DO
         // see https://iss.oden.utexas.edu/?p=projects/galois/analytics/triangle_counting for future reference
         long triangleCount = 0;
-        for (int i = 0; i < graph.length; i++) {
-            for(Integer node: graph[i]) {
-                if (i < node) {
-                    triangleCount += 0;//graph[i];
+        for (int n = 0; n < graph.length; n++) {
+            for(Integer m: graph[n]) {
+                if (n < m) {
+                    if (graph[n].size() < graph[m].size()) {
+                        for (Integer a: graph[n]) {
+                            if (n<a && a<m && graph[m].contains(a)) {
+                                triangleCount++;
+                            }
+                        }
+                    } else {
+                        for (Integer a: graph[m]) {
+                            if (n<a && a<m && graph[n].contains(a)) {
+                                triangleCount++;
+                            }
+                        }
+                    }
+                    // triangleCount += 0;//graph[i];
                 }
             }
         }
