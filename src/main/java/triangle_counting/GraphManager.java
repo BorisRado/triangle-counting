@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.math3.linear.BlockRealMatrix;
+import org.apache.commons.math3.linear.OpenMapRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SparseRealMatrix;
 
@@ -54,7 +55,6 @@ public class GraphManager {
         }
         
         bufferedReader.close();
-        System.out.println("Done reading!");
         return graph;
     }
     
@@ -110,11 +110,11 @@ public class GraphManager {
         return adjacencyMatrix;
     }
 
-    public static RealMatrix toAdjacencyRealMatrix(ArrayList<Integer>[] graph) {
-        RealMatrix adjMatrix = new BlockRealMatrix(graph.length, graph.length);
+    public static SparseRealMatrix toAdjacencySparseRealMatrix(ArrayList<Integer>[] graph) {
+        SparseRealMatrix adjMatrix = new OpenMapRealMatrix(graph.length, graph.length);
         for (int i = 0; i < graph.length; i++) {
             for (Integer dstNode: graph[i]) {
-                adjMatrix.addToEntry(i, dstNode, 1d);
+                adjMatrix.setEntry(i, dstNode, 1d);
             }
         }
         return adjMatrix;
