@@ -2,6 +2,10 @@ package triangle_counting;
 
 import java.util.Set;
 
+import org.apache.commons.math3.linear.BlockRealMatrix;
+import org.apache.commons.math3.linear.SparseRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
+
 public class TriangleCounter {
     
     public static long naiveSearch(Set<Integer>[] graph) {
@@ -88,15 +92,12 @@ public class TriangleCounter {
         return triangleCount;
     }
 
-    public static long cycleCounting(boolean[][] adjMatrix) {
-        // TODO
+    public static long cycleCounting(RealMatrix adjMatrix) {
+        // TODO - maybe use SparseRealMatrix instead?
         // See http://www.math.tau.ac.il/~nogaa/PDFS/ayz4.pdf (Section 6)
         // For 3-cycles the formula is simply trace(A)/6
-        long triangleCount = 0;
-        long[][] A3 = new long[1][1]; // TODO - A3 = adjMatrix to the power 3 - Apache Commons Math library?
-        for (int i = 0; i < A3.length; i++) {
-            triangleCount += A3[i][i];
-        }
+        RealMatrix A3 = adjMatrix.power(3);
+        long triangleCount = (long)A3.getTrace();
         return triangleCount / 6;
     }
 }

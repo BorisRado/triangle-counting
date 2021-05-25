@@ -1,5 +1,7 @@
 package triangle_counting;
 
+import org.apache.commons.math3.linear.RealMatrix;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +14,7 @@ public class Tester {
             fileName = args[0];
         try {
             ArrayList<Integer>[] graph = GraphManager.readGraph(fileName, 1, false);
-            GraphManager.writeGraph(graph, "/home/boris/ina/tmp.net", false);
+            GraphManager.writeGraph(graph, "data/tmp.net", false);
             Set<Integer>[] graphSet = GraphManager.toSetRepresentation(graph);
             int[][] graphArray = GraphManager.toArrayRepresentation(graph, true);
            
@@ -26,7 +28,14 @@ public class Tester {
             tc = TriangleCounter.adjMatrixCounting(adjMatrix);
             System.out.println("Number of triangles (search with adjacency matrix): " + tc);
             
+            // test approach with edge iterator
+            tc = TriangleCounter.edgeIterator(graphSet);
+            System.out.println("Number of triangles (search with edge iterator): " + tc);
 
+            // test cycle counting
+            RealMatrix adjRealMatrix = GraphManager.toAdjacencyRealMatrix(graph);
+            tc = TriangleCounter.cycleCounting(adjRealMatrix);
+            System.out.println("Number of triangles (search with cycle counting): " + tc);
         } catch (IOException e) {
             e.printStackTrace();
         }
