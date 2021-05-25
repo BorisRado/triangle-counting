@@ -46,6 +46,20 @@ public class Tester {
             // start = System.currentTimeMillis();
             // tc = TriangleCounter.exactEigenTriangle(adjSparseRealMatrix);
             // System.out.println("Number of triangles (search with eigenvalues): " + tc + " in " + (System.currentTimeMillis()-start) + "ms");
+            
+            MySparseMatrix matrix = new MySparseMatrix(adjMatrix, 20098); // 20098
+            start = System.currentTimeMillis();
+            long[][] square = matrix.multiply(adjMatrix);
+            tc = matrix.hadamardWithSum(square);
+            System.out.println("Number of triangles (search with cycle counting sparse): " + tc + " in " + (System.currentTimeMillis()-start) + "ms");
+            // matrix.myPrint();
+            /*int x = 0;
+            for (int i = 0; i < adjMatrix.length; i++) {
+                for (int j = 0; j < adjMatrix.length; j++) {
+                    if (adjMatrix[i][j]) x++;
+                }
+            }
+            System.out.println(x);*/
         } catch (IOException e) {
             e.printStackTrace();
         }

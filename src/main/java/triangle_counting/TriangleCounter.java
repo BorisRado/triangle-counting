@@ -101,7 +101,6 @@ public class TriangleCounter {
     }
 
     public static long exactEigenTriangle(SparseRealMatrix adjMatrix) {
-        // TODO - SparseRealMatrix?
         // See https://www.math.cmu.edu/~ctsourak/tsourICDM08.pdf
         EigenDecomposition ed = new EigenDecomposition(adjMatrix);
         double triangleCount = 0;
