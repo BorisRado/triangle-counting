@@ -9,16 +9,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.linear.OpenMapRealMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SparseRealMatrix;
 
 public class GraphManager {
     
     @SuppressWarnings("unchecked")
     public static ArrayList<Integer>[] readGraph(String fileName, int representationType, boolean isDirected) throws IOException {
-        System.out.println("Reading file: " + fileName);
+        System.out.println("\n\nReading file: " + fileName);
         FileReader fileReader = new FileReader(fileName);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line = bufferedReader.readLine();

@@ -2,17 +2,15 @@ package triangle_counting;
 
 import java.util.Set;
 
-import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.SparseRealMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
 import java.lang.Math;
 
 import static java.lang.Math.round;
 
 public class TriangleCounter {
     
-    public static long naiveSearch(Set<Integer>[] graph) {
+    public static Long naiveSearch(Set<Integer>[] graph) {
         long triangleCount = 0;
         for (int i = 0; i < graph.length; i++) {
             for (int j = i + 1; j < graph.length; j++) {
@@ -26,7 +24,7 @@ public class TriangleCounter {
                 }
             }
         }
-        return triangleCount;
+        return new Long(triangleCount);
     }
     
     /**
@@ -34,9 +32,9 @@ public class TriangleCounter {
      * ```Practical algorithms for triangle computationsin very large (sparse (power-law)) graphs```
      * by Matthieu Latapy, January 2008
      */
-    public static long forwardAlgorithm() {
+    public static Long forwardAlgorithm() {
         // TO-DO
-        return 0;
+        return 0L;
     }
     
     /**
@@ -44,16 +42,16 @@ public class TriangleCounter {
      * ```Practical algorithms for triangle computationsin very large (sparse (power-law)) graphs```
      * by Matthieu Latapy, January 2008
      */
-    public static long compactForwardAlgorithm() {
+    public static Long compactForwardAlgorithm() {
         // TO-DO
-        return 0;
+        return 0L;
     }
     
     /**
      * Implementation of the theorem 1 presented in the following paper:
      * ```Graphing trillions of triangles``` by Paul Burkhardt, Sep 2016
      */
-    public static long adjMatrixCounting(boolean[][] adjMatrix) {
+    public static Long adjMatrixCounting(boolean[][] adjMatrix) {
         long triangleCount = 0;
         for (int i = 0; i < adjMatrix.length; i++) {
             for (int j = i + 1; j < adjMatrix.length; j++) {
@@ -66,10 +64,10 @@ public class TriangleCounter {
                 }
             }
         }
-        return triangleCount / 3;
+        return new Long(triangleCount / 3);
     }
     
-    public static long edgeIterator(Set<Integer>[] graph) {
+    public static Long edgeIterator(Set<Integer>[] graph) {
         // see https://iss.oden.utexas.edu/?p=projects/galois/analytics/triangle_counting for future reference
         long triangleCount = 0;
         for (int n = 0; n < graph.length; n++) {
@@ -91,22 +89,23 @@ public class TriangleCounter {
                 }
             }
         }
-        return triangleCount;
+        return new Long(triangleCount);
     }
 
-    public static long cycleCounting(SparseRealMatrix adjMatrix) {
+    public static Long cycleCounting(SparseRealMatrix adjMatrix) {
         // See http://www.math.tau.ac.il/~nogaa/PDFS/ayz4.pdf (Section 6)
         // For 3-cycles the formula is simply trace(A^3)/6
-        return (long)adjMatrix.power(3).getTrace() / 6;
+        return new Long((long)adjMatrix.power(3).getTrace() / 6);
     }
 
-    public static long exactEigenTriangle(SparseRealMatrix adjMatrix) {
+    public static Long exactEigenTriangle(SparseRealMatrix adjMatrix) {
         // See https://www.math.cmu.edu/~ctsourak/tsourICDM08.pdf
         EigenDecomposition ed = new EigenDecomposition(adjMatrix);
         double triangleCount = 0;
         for (double v: ed.getRealEigenvalues()) {
             triangleCount += Math.pow(v, 3);
         }
-        return round(triangleCount) / 6;
+        long result = round(triangleCount) / 6;
+        return new Long(result);
     }
 }

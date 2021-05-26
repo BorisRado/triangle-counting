@@ -1,67 +1,62 @@
 package triangle_counting;
 
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.SparseRealMatrix;
-
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 
+import org.apache.commons.math3.linear.SparseRealMatrix;
+
 public class Tester {
-    public static void main(String [] args) {
-        String fileName = "";
-        if (args.length > 0)
-            fileName = args[0];
-        try {
-            ArrayList<Integer>[] graph = GraphManager.readGraph(fileName, 1, false);
-            GraphManager.writeGraph(graph, "data/tmp.net", false);
-            Set<Integer>[] graphSet = GraphManager.toSetRepresentation(graph);
-            int[][] graphArray = GraphManager.toArrayRepresentation(graph, true);
-           
-            boolean[][] adjMatrix = GraphManager.toAdjacencyMatrix(graph);
+    
+    public static void main(String [] args) throws Exception {
+        
+        if (args.length == 0)
+            throw new Exception("You need to specify the folder containing the graphs to be tested.");
+        
+        String folderName = args[0];
+        File folder = new File(folderName);
+        
+        for (File file: folder.listFiles()) {
             
-            // test naive search
-            long start = System.currentTimeMillis();
-            long tc = TriangleCounter.naiveSearch(graphSet);
-            System.out.println("Number of triangles (naive search) " + tc + " in " + (System.currentTimeMillis()-start) + "ms");
-
-            // test approach with adjecency matrix
-            start = System.currentTimeMillis();
-            tc = TriangleCounter.adjMatrixCounting(adjMatrix);
-            System.out.println("Number of triangles (search with adjacency matrix): " + tc + " in " + (System.currentTimeMillis()-start) + "ms");
-            
-            // test approach with edge iterator
-            start = System.currentTimeMillis();
-            tc = TriangleCounter.edgeIterator(graphSet);
-            System.out.println("Number of triangles (search with edge iterator): " + tc + " in " + (System.currentTimeMillis()-start) + "ms");
-
-            // test cycle counting
-            SparseRealMatrix adjSparseRealMatrix = GraphManager.toAdjacencySparseRealMatrix(graph);
-            start = System.currentTimeMillis();
-            tc = TriangleCounter.cycleCounting(adjSparseRealMatrix);
-            System.out.println("Number of triangles (search with cycle counting sparse): " + tc + " in " + (System.currentTimeMillis()-start) + "ms");
-
-            // test eigen triangles
-            // start = System.currentTimeMillis();
-            // tc = TriangleCounter.exactEigenTriangle(adjSparseRealMatrix);
-            // System.out.println("Number of triangles (search with eigenvalues): " + tc + " in " + (System.currentTimeMillis()-start) + "ms");
-            
-            MySparseMatrix matrix = new MySparseMatrix(adjMatrix, 20098); // 20098
-            start = System.currentTimeMillis();
-            long[][] square = matrix.multiply(adjMatrix);
-            tc = matrix.hadamardWithSum(square);
-            System.out.println("Number of triangles (search with cycle counting sparse): " + tc + " in " + (System.currentTimeMillis()-start) + "ms");
-            // matrix.myPrint();
-            /*int x = 0;
-            for (int i = 0; i < adjMatrix.length; i++) {
-                for (int j = 0; j < adjMatrix.length; j++) {
-                    if (adjMatrix[i][j]) x++;
-                }
+            try {
+                ArrayList<Integer>[] graph = GraphManager.readGraph(file.getAbsolutePath(), 1, false);
+                runAllTests(graph, file.getName());
+            } catch (IOException e) {
+                e.printStackTrace();            
             }
-            System.out.println(x);*/
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        System.exit(2);
+        
+        
+        
+    }
+    
+    public static void runAllTests(ArrayList<Integer>[] graph, String graphName) {
+        setBasedAlgorithms(GraphManager.toSetRepresentation(graph), graphName);
+        adjMatrixBasedAlgorithms(GraphManager.toAdjacencyMatrix(graph), graphName);
+        sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName);
+        
+        
+        // what are the following lines?
+        // MySparseMatrix matrix = new MySparseMatrix(GraphManager.toAdjacencyMatrix(graph), 20098); // 20098
+        // long start = System.currentTimeMillis();
+        // long[][] square = matrix.multiply(GraphManager.toAdjacencyMatrix(graph));
+        // long tc = matrix.hadamardWithSum(square);
+        // System.out.println("Number of triangles (search with cycle counting sparse): " + tc + " in " + (System.currentTimeMillis()-start) + "ms");
+    }
+    
+    public static void setBasedAlgorithms(Set<Integer>[] graph, String graphName) {
+        Executor.execute(() -> TriangleCounter.naiveSearch(graph), "Naive search", graphName);
+        Executor.execute(() -> TriangleCounter.edgeIterator(graph), "Edge iterator", graphName);
+    }
+    
+    public static void adjMatrixBasedAlgorithms(boolean[][] graph, String graphName) {
+        Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Adjacency matrix search", graphName);
+    }
+    
+    public static void sparseRealMatrixBasedAlgorithms(SparseRealMatrix graph, String graphName) {
+        Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Sparse real matrix", graphName);
+        Executor.execute(() -> TriangleCounter.exactEigenTriangle(graph), "Exact eigen triangle", graphName);
     }
 }
