@@ -63,8 +63,9 @@ public class GraphManager {
         // write nodes
         for (int i = 1; i <= graph.length; i++)
             file.println(i + " \"" + i + "\"");
-        
-        
+
+        // TODO - missing "*edges"
+
         for (int srcNode = 0; srcNode < graph.length; srcNode ++) 
             for (Integer destinationNode: graph[srcNode]) 
                 if (isDirected || srcNode < destinationNode)
@@ -106,6 +107,10 @@ public class GraphManager {
             }
         }
         return adjacencyMatrix;
+    }
+
+    public static MySparseMatrix toAdjacencyMySparseMatrix(ArrayList<Integer>[] graph) {
+        return new MySparseMatrix(graph);
     }
 
     public static SparseRealMatrix toAdjacencySparseRealMatrix(ArrayList<Integer>[] graph) {

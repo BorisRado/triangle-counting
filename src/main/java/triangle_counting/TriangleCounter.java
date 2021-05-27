@@ -66,6 +66,10 @@ public class TriangleCounter {
         }
         return new Long(triangleCount / 3);
     }
+
+    public static Long adjMatrixCounting(MySparseMatrix adjMatrix) {
+        return adjMatrix.countTriangles();
+    }
     
     public static Long edgeIterator(Set<Integer>[] graph) {
         // see https://iss.oden.utexas.edu/?p=projects/galois/analytics/triangle_counting for future reference
@@ -92,6 +96,25 @@ public class TriangleCounter {
         return new Long(triangleCount);
     }
 
+    /**
+     * See http://www.math.tau.ac.il/~nogaa/PDFS/ayz4.pdf (Section 6).
+     * Taking advantage of the fact that we have a sparse matrix and
+     * only need diagonal elements, cutting down on a lot of unnecessary
+     * computation.
+     * Could be made even faster if we had adjacency matrix in both forms,
+     * i.e. MySparseMatrix and boolean[][], but would take a lot more memory.
+     * @param adjMatrix MySparseMatrix representation of adjacency matrix.
+     * @return number of triangles in graph.
+     */
+    public static Long cycleCounting(MySparseMatrix adjMatrix) {
+        return adjMatrix.traceCubed();
+    }
+
+    /**
+     * See http://www.math.tau.ac.il/~nogaa/PDFS/ayz4.pdf (Section 6).
+     * @param adjMatrix SparseRealMatrix representation of adjacency matrix.
+     * @return number of triangles in graph.
+     */
     public static Long cycleCounting(SparseRealMatrix adjMatrix) {
         // See http://www.math.tau.ac.il/~nogaa/PDFS/ayz4.pdf (Section 6)
         // For 3-cycles the formula is simply trace(A^3)/6

@@ -35,15 +35,8 @@ public class Tester {
     public static void runAllTests(ArrayList<Integer>[] graph, String graphName) {
         setBasedAlgorithms(GraphManager.toSetRepresentation(graph), graphName);
         adjMatrixBasedAlgorithms(GraphManager.toAdjacencyMatrix(graph), graphName);
+        sparseAdjMatrixBasedAlgorithms(GraphManager.toAdjacencyMySparseMatrix(graph), graphName);
         sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName);
-        
-        
-        // what are the following lines?
-        // MySparseMatrix matrix = new MySparseMatrix(GraphManager.toAdjacencyMatrix(graph), 20098); // 20098
-        // long start = System.currentTimeMillis();
-        // long[][] square = matrix.multiply(GraphManager.toAdjacencyMatrix(graph));
-        // long tc = matrix.hadamardWithSum(square);
-        // System.out.println("Number of triangles (search with cycle counting sparse): " + tc + " in " + (System.currentTimeMillis()-start) + "ms");
     }
     
     public static void setBasedAlgorithms(Set<Integer>[] graph, String graphName) {
@@ -54,9 +47,14 @@ public class Tester {
     public static void adjMatrixBasedAlgorithms(boolean[][] graph, String graphName) {
         Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Adjacency matrix search", graphName);
     }
+
+    public static void sparseAdjMatrixBasedAlgorithms(MySparseMatrix graph, String graphName) {
+        Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Sparse adjacency matrix search", graphName);
+        Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Sparse adjacency matrix search", graphName);
+    }
     
     public static void sparseRealMatrixBasedAlgorithms(SparseRealMatrix graph, String graphName) {
         Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Sparse real matrix", graphName);
-        Executor.execute(() -> TriangleCounter.exactEigenTriangle(graph), "Exact eigen triangle", graphName);
+        // Executor.execute(() -> TriangleCounter.exactEigenTriangle(graph), "Exact eigen triangle", graphName);
     }
 }
