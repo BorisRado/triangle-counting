@@ -1,5 +1,6 @@
 package triangle_counting;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import org.apache.commons.math3.linear.EigenDecomposition;
@@ -130,5 +131,29 @@ public class TriangleCounter {
         }
         long result = round(triangleCount) / 6;
         return new Long(result);
+    }
+
+    /**
+     * https://www.vldb.org/pvldb/vol6/p1870-aduri.pdf
+     * @param edgeList edge list representation of the network - assuming all edges are unique and
+     *                 for edge e=(x,y) it holds that x<y
+     * @param r number of estimators used
+     * @param w size of batches in which data is streamed
+     * @return estimated number of triangles in the network
+     */
+    public static Long streamGraphEstimate(int[][] edgeList, int r, int w) {
+        StreamGraphTriangleCounter sgtc = new StreamGraphTriangleCounter(r);
+        int start = 0;
+        int end = w;
+        for (int i = 0; i < edgeList.length / w; i++) {
+            sgtc.bulkTC(Arrays.copyOfRange(edgeList, start, end));
+            start += w;
+            end += w;
+        }
+        if (end < edgeList.length) {
+            sgtc.bulkTC(Arrays.copyOfRange(edgeList, end, edgeList.length));
+        }
+
+        return sgtc.estimateTriangles();
     }
 }

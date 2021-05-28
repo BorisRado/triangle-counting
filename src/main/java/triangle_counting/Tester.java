@@ -3,9 +3,13 @@ package triangle_counting;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.commons.math3.linear.SparseRealMatrix;
+
+import javax.sound.midi.SysexMessage;
 
 public class Tester {
     
@@ -36,7 +40,7 @@ public class Tester {
         setBasedAlgorithms(GraphManager.toSetRepresentation(graph), graphName);
         adjMatrixBasedAlgorithms(GraphManager.toAdjacencyMatrix(graph), graphName);
         sparseAdjMatrixBasedAlgorithms(GraphManager.toAdjacencyMySparseMatrix(graph), graphName);
-        sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName);
+        sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName);streamGraphEstimateAlgorithms(GraphManager.toEdgeList(graph), graphName);
     }
     
     public static void setBasedAlgorithms(Set<Integer>[] graph, String graphName) {
@@ -56,5 +60,9 @@ public class Tester {
     public static void sparseRealMatrixBasedAlgorithms(SparseRealMatrix graph, String graphName) {
         Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Sparse real matrix", graphName);
         // Executor.execute(() -> TriangleCounter.exactEigenTriangle(graph), "Exact eigen triangle", graphName);
+    }
+
+    public static void streamGraphEstimateAlgorithms(int[][] edgeList, String graphName) {
+        Executor.execute(() -> TriangleCounter.streamGraphEstimate(edgeList, edgeList.length / 10, edgeList.length / 5), "Stream Graph Estimate", graphName);
     }
 }
