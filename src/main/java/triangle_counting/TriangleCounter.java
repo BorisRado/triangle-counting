@@ -166,7 +166,7 @@ public class TriangleCounter {
         long m = 0;
         for (int[] adj: graphArray) m += adj.length;
         m /= 2;
-        long r = m > 10 ? m / 10 : 1;
+        long r = m > 5 ? m / 5 : 1;
         long l = r>20 ? r / 20 : 1;
         TriangleCountingEstimator tce = new TriangleCountingEstimator(graphSet, graphArray);
         return tce.Tetris((int)r, (int)l, 25);
