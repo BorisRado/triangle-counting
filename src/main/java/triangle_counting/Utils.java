@@ -19,5 +19,31 @@ public class Utils {
         }
         return list;
     }
+    
+    public static String getOffset(int offset) {
+        String out = "";
+        for (int i = 0; i < offset; i++)
+            out += "\t";        
+        return out;
+                
+    }
+    
+    public static String printJson(String key, String value, int offset) {
+        String out = getOffset(offset);
+        out += "\"" + key + "\"" + ": \"" + value + "\",";
+        return out;
+    }
+    
+    public static String printJson(String key, Long value, int offset) {
+        String out = getOffset(offset);
+        out += "\"" + key + "\"" + ": " + value + ",";
+        return out;
+    }
+    
+    public static String printJson(String symbol, int offset) {
+        String out = getOffset(offset);
+        out += symbol;
+        return out;
+    }
 
 }
