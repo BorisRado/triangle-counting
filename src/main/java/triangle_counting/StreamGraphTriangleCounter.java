@@ -20,7 +20,7 @@ public class StreamGraphTriangleCounter {
         for (int i = 0; i < r; i++) {
             estimators[i] = new Estimator();
         }
-        random = new Random(123);
+        random = new Random();
         m = 0;
     }
 
@@ -85,6 +85,9 @@ public class StreamGraphTriangleCounter {
         HashMap<Integer, Integer> deg = new HashMap<>();
         int x, y, degx, degy;
         for (int i = 0; i < B.length; i++) {
+            if (B[i] == null) {
+                System.out.println("WTF???");
+            }
             x = B[i][0];
             y = B[i][1];
             degx = deg.getOrDefault(x, 0);
@@ -131,30 +134,31 @@ public class StreamGraphTriangleCounter {
     }
 
     private void randEdgeIntoEvent(Estimator est, HashMap<Integer, Integer> deg) {
-        int a = deg.getOrDefault(est.r1[0], 0) - est.betax;
-        int b = deg.getOrDefault(est.r1[1], 0) - est.betay;
+        int a = deg.getOrDefault(est.r1[0], 0);
+        a -= est.betax;
+        int b = deg.getOrDefault(est.r1[1], 0);
+        b -= est.betay;
         int cminus = est.c;
         int cplus = a+b;
-
-        if (cminus+cplus > 0) {
-            int phi = random.nextInt(cminus + cplus);
-            ArrayList<Integer> i;
-            if (phi < cminus) {
-                // Keep existing r2
-            } else {
-                if (phi < cminus + a) {
-                    i = new ArrayList<>(Arrays.asList(est.r1[0], est.betax + phi - cminus));
-                } else {
-                    i = new ArrayList<>(Arrays.asList(est.r1[1], est.betay + phi - cminus - a));
-                }
-                P.computeIfAbsent(i, k -> new ArrayList<>());
-                P.get(i).add(est);
-            }
-        }
 
         // Update values
         est.c += cplus;
         est.setBeta(0, 0);
+        if (cminus+cplus == 0) {
+            return;
+        }
+        int phi = random.nextInt(cminus+cplus);
+        ArrayList<Integer> i;
+        if (phi < cminus) {
+            // Keep existing r2
+            return;
+        } else if (phi < cminus + a) {
+            i = new ArrayList<>(Arrays.asList(est.r1[0], est.betax + phi - cminus));
+        } else {
+            i = new ArrayList<>(Arrays.asList(est.r1[1], est.betay + phi - cminus - a));
+        }
+        P.computeIfAbsent(i, k -> new ArrayList<>());
+        P.get(i).add(est);
     }
 
     public long estimateTriangles() {
