@@ -150,9 +150,10 @@ public class TriangleCounter {
             start += w;
             end += w;
         }
-        if (start < edgeList.length) {
-            sgtc.bulkTC(Arrays.copyOfRange(edgeList, start, edgeList.length));
+        if (end < edgeList.length) {
+            sgtc.bulkTC(Arrays.copyOfRange(edgeList, end, edgeList.length));
         }
+
         return sgtc.estimateTriangles();
     }
 }
