@@ -80,7 +80,7 @@ public class GraphManager {
     public static Set<Integer>[] toSetRepresentation(ArrayList<Integer>[] graph){
         Set<Integer>[] setGraph =(Set<Integer>[]) new Set[graph.length];
         for (int i = 0; i < graph.length; i++)
-            setGraph[i] = new HashSet<Integer>(graph[i]);
+            setGraph[i] = new HashSet<>(graph[i]);
         return setGraph;
     }
     

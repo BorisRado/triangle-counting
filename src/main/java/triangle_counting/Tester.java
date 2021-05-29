@@ -38,11 +38,13 @@ public class Tester {
     
     public static void runAllTests(ArrayList<Integer>[] graph, String graphName, PrintWriter outputFile) {        
         writeGraphInfo(graph, graphName, outputFile);
+
         setBasedAlgorithms(GraphManager.toSetRepresentation(graph), graphName, outputFile);
         adjMatrixBasedAlgorithms(GraphManager.toAdjacencyMatrix(graph), graphName, outputFile);
         sparseAdjMatrixBasedAlgorithms(GraphManager.toAdjacencyMySparseMatrix(graph), graphName, outputFile);
         sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName, outputFile);
         streamGraphEstimateAlgorithms(GraphManager.toEdgeList(graph), graphName, outputFile);
+        randomWalkAlgorithms(GraphManager.toSetRepresentation(graph), GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
         outputFile.println(Utils.printJson("]", 2));
         outputFile.println(Utils.printJson("},", 1));
     }
@@ -69,6 +71,10 @@ public class Tester {
     public static void streamGraphEstimateAlgorithms(int[][] edgeList, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.streamGraphEstimate(edgeList, edgeList.length > 20 ? edgeList.length / 20 : 1,  edgeList.length > 10 ? edgeList.length / 10 : edgeList.length),
                 "Stream Graph Estimate", graphName, outputFile);
+    }
+
+    public static void randomWalkAlgorithms(Set<Integer>[] graphSet, int[][] graphArray, String graphName, PrintWriter outputFile) {
+        Executor.execute(() -> TriangleCounter.randomWalkEstimate(graphSet, graphArray), "Random Walk Estimate", graphName, outputFile);
     }
     
     private static void writeGraphInfo(ArrayList<Integer>[] graph, String graphName,  PrintWriter outputFile) {
