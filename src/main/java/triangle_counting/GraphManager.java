@@ -113,6 +113,7 @@ public class GraphManager {
     }
 
     public static MySparseMatrix toAdjacencyMySparseMatrix(ArrayList<Integer>[] graph) {
+        // TODO - make sure that graph is simple
         return new MySparseMatrix(graph);
     }
 

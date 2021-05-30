@@ -41,7 +41,7 @@ public class TriangleCountingEstimator {
         for (int[] adj: graphArray) m += adj.length;
         m /= 2;
         // double m = edgeCountEstimator(R, lmix);
-        System.out.println(Y + " " + dR + " " + m + " " + r);
+        // System.out.println(Y + " " + dR + " " + m + " " + r);
         return (long)((m / r) * Y * dR);
     }
 

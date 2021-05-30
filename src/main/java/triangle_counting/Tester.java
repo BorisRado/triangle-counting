@@ -57,6 +57,7 @@ public class Tester {
     public static void setBasedAlgorithms(Set<Integer>[] graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.naiveSearch(graph), "Naive search", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.edgeIterator(graph), "Edge iterator", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.neighborPairsSingle(graph), "Neighbour pairs - single", graphName, outputFile);
     }
     
     public static void adjMatrixBasedAlgorithms(boolean[][] graph, String graphName, PrintWriter outputFile) {
@@ -80,6 +81,7 @@ public class Tester {
 
     public static void randomWalkAlgorithms(Set<Integer>[] graphSet, int[][] graphArray, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.randomWalkEstimate(graphSet, graphArray), "Random Walk Estimate", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.neighborPairsDouble(graphSet, graphArray), "Neighbour pairs - double", graphName, outputFile);
     }
     
     private static void writeGraphInfo(ArrayList<Integer>[] graph, String graphName,  PrintWriter outputFile) {

@@ -28,6 +28,12 @@ public class MySparseMatrix {
         }
     }
 
+    /**
+     * Creates a sparse matrix in CSR format. REQUIRES: Simple graph, else result might not be
+     * completely accurate, because it may find a triangle (v,v,u) if there is an edge (v,v).
+     * Also for multilinks it will run into issues.
+     * @param graph simple graph!
+     */
     public MySparseMatrix(ArrayList<Integer>[] graph) {
         // TODO - m is the number of edges, but this may include multi-edges and will
         // TODO - therefore be higher than the actual length of values/columns ... last indices of those are

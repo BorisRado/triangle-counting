@@ -1,15 +1,7 @@
 package triangle_counting;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.linear.EigenDecomposition;
@@ -139,6 +131,62 @@ public class TriangleCounter {
             }
         }
         return new Long(triangleCount);
+    }
+
+    /**
+     * `CS167: Reading in Algorithms Counting Triangles` by Tim Roughgarden.
+     * Using 2 data types to save time.
+     * @param graphSet set representation of graph
+     * @param graphArray array representation of graph
+     * @return number of triangles
+     */
+    public static Long neighborPairsDouble(Set<Integer>[] graphSet, int[][] graphArray) {
+        long triangleCount = 0;
+        int degv, u, w, degu, degw;
+        for (int v = 0; v < graphArray.length; v++) {
+            degv = graphArray[v].length;
+            for (int i = 0; i < degv; i++) {
+                u = graphArray[v][i];
+                degu = graphArray[u].length;
+                if (degu > degv || (degu == degv && v<u)) {
+                    for (int j = i+1; j < degv; j++) {
+                        w = graphArray[v][j];
+                        degw = graphArray[w].length;
+                        if (degw > degv || (degw == degv && v<w)) {
+                            if (graphSet[w].contains(u)) triangleCount++;
+                        }
+                    }
+                }
+            }
+        }
+        return triangleCount;
+    }
+
+    /**
+     * `CS167: Reading in Algorithms Counting Triangles` by Tim Roughgarden.
+     * Using a single graph datatype ... less space more time.
+     * @param graph set representation of graph
+     * @return number of triangles
+     */
+    public static Long neighborPairsSingle(Set<Integer>[] graph) {
+        long triangleCount = 0;
+        int degv, degu, degw;
+        for (int v = 0; v < graph.length; v++) {
+            degv = graph[v].size();
+            for (Integer u: graph[v]) {
+                degu = graph[u].size();
+                if (degu > degv || (degu == degv && v<u)) {
+                    for (Integer w: graph[v]) {
+                        if (w<=u) continue;
+                        degw = graph[w].size();
+                        if (degw > degv || (degw == degv && v<w)) {
+                            if (graph[u].contains(w)) triangleCount++;
+                        }
+                    }
+                }
+            }
+        }
+        return triangleCount;
     }
 
     /**
