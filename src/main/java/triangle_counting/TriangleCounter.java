@@ -1,10 +1,21 @@
 package triangle_counting;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.SparseRealMatrix;
+import org.apache.commons.math3.util.Pair;
+
 import java.lang.Math;
 
 import static java.lang.Math.round;
@@ -33,9 +44,42 @@ public class TriangleCounter {
      * ```Practical algorithms for triangle computationsin very large (sparse (power-law)) graphs```
      * by Matthieu Latapy, January 2008
      */
-    public static Long forwardAlgorithm() {
-        // TO-DO
-        return 0L;
+    public static Long forwardAlgorithm(int [][] graph) {
+        // define injective function eta - takes O(n log(n)) time
+        SortedSet<Pair<Integer, int[]>> pairs = new TreeSet<>((x, y) -> x.getSecond().length > y.getSecond().length ? 1 : -1);
+        
+        for (int i = 0; i < graph.length; i++)
+            pairs.add(new Pair<>(i, graph[i]));
+        
+        // store etas for each node in map (node -> eta)
+        Map<Integer, Integer> etas = new HashMap<Integer, Integer>();
+        int idx = 0;
+        for(Pair<Integer, int[]> pair: pairs) {
+            etas.put(pair.getFirst(), idx);
+            idx++;
+        }
+        
+        // initialize arraylists
+        ArrayList<Integer>[] A = new ArrayList[graph.length];
+        for (int i = 0; i < graph.length; i++) {
+            A[i] = new ArrayList<>(1);
+            A[i].ensureCapacity(graph.length / 2);
+        }
+        
+        int triangleCount = 0;
+        
+        Iterator<Pair<Integer, int[]>> iterator = pairs.iterator();
+        while (iterator.hasNext()) {
+            Pair<Integer, int[]> pair = iterator.next();
+            int v = pair.getFirst();
+            for (int u: pair.getSecond()) {
+                if (etas.get(u) < etas.get(v))
+                    continue;
+                triangleCount += Utils.arrayIntersection(A[u], A[v]);
+                A[u].add(etas.get(v));
+            }
+        }
+        return new Long(triangleCount);
     }
     
     /**

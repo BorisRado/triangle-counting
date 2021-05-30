@@ -40,6 +40,7 @@ public class Tester {
         writeGraphInfo(graph, graphName, outputFile);
 
         setBasedAlgorithms(GraphManager.toSetRepresentation(graph), graphName, outputFile);
+        adjacencyArrayBasedAlgorithms(GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
         adjMatrixBasedAlgorithms(GraphManager.toAdjacencyMatrix(graph), graphName, outputFile);
         sparseAdjMatrixBasedAlgorithms(GraphManager.toAdjacencyMySparseMatrix(graph), graphName, outputFile);
         sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName, outputFile);
@@ -47,6 +48,10 @@ public class Tester {
         randomWalkAlgorithms(GraphManager.toSetRepresentation(graph), GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
         outputFile.println(Utils.printJson("]", 2));
         outputFile.println(Utils.printJson("},", 1));
+    }
+    
+    public static void adjacencyArrayBasedAlgorithms(int[][] graph, String graphName, PrintWriter outputFile) {
+        Executor.execute(() -> TriangleCounter.forwardAlgorithm(graph), "Forward algorithm", graphName, outputFile);
     }
     
     public static void setBasedAlgorithms(Set<Integer>[] graph, String graphName, PrintWriter outputFile) {

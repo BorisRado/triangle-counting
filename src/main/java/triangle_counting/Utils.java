@@ -3,6 +3,7 @@ package triangle_counting;
 import org.apache.commons.math3.linear.SparseRealMatrix;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Utils {
 
@@ -44,6 +45,24 @@ public class Utils {
         String out = getOffset(offset);
         out += symbol;
         return out;
+    }
+    
+    public static int arrayIntersection(ArrayList<Integer> a, ArrayList<Integer> b) {
+        // assume, that the two arrays are sorted
+        int i = 0, j = 0;
+        int count = 0;
+        while (i < a.size() && j < b.size()) {
+            if (a.get(i) < b.get(j))
+                i++;
+            else if (b.get(j) < a.get(i))
+                j++;
+            else {
+                count++;
+                i++;
+                j++;
+            }
+        }
+        return count;
     }
 
 }
