@@ -1,11 +1,11 @@
 package triangle_counting;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
 public class TriangleCountingEstimator {
-    int s;
     Set<Integer>[] graphSet;
     int[][] graphArray;
     Random random;
@@ -17,7 +17,7 @@ public class TriangleCountingEstimator {
 
     public long Tetris(int r, int l, int lmix) {
         // Pick start node
-        s = random.nextInt(graphArray.length);
+        int s = startNodeQuery();
 
         ArrayList<int[]> R = randomWalk(s, r);
 
@@ -41,7 +41,8 @@ public class TriangleCountingEstimator {
         for (int[] adj: graphArray) m += adj.length;
         m /= 2;
         // double m = edgeCountEstimator(R, lmix);
-        return (long)((Y * dR * m) / r);
+        System.out.println(Y + " " + dR + " " + m + " " + r);
+        return (long)((m / r) * Y * dR);
     }
 
     private ArrayList<int[]> randomWalk(int start, int r) {
@@ -73,20 +74,25 @@ public class TriangleCountingEstimator {
     private double edgeCountEstimator(ArrayList<int[]> R, int lmix) {
         // This isn't optimized etc. For our purposes it's not needed, because we know the exact edge count.
         double Y = 0;
-        int[] ej, ek;
-        double ci;
-        int Ri = 0;
+        ArrayList<Integer> ej;
+        long ci;
+        long RiCounter = 0;
+        Set<ArrayList<Integer>> Ri;
         for (int i = 0; i < lmix; i++) {
             ci = 0;
+            Ri = new HashSet<>();
+            RiCounter = 0;
             for (int j = 0; j < R.size(); j += degreeQuery(R.get(j)[0]) + lmix - 1) {
-                ej = R.get(j);
-                Ri++;
-                for (int k = j + degreeQuery(R.get(j)[0]) + lmix - 1; k < R.size(); k += degreeQuery(R.get(j)[0]) + lmix - 1) {
-                    ek = R.get(k);
-                    if (ej[0] == ek[0] && ej[1] == ek[1]) ci++;
+                RiCounter++;
+                ej = Utils.arrayToList(R.get(j));
+                if (Ri.contains(ej)) {
+                    // Collision
+                    ci++;
+                } else {
+                    Ri.add(ej);
                 }
             }
-            Y += Ri * (Ri-1) / 2.0 / ci;
+            Y += RiCounter * (RiCounter-1) / 2.0 / ci;
         }
         return Y / lmix;
     }
@@ -102,5 +108,11 @@ public class TriangleCountingEstimator {
 
     private boolean edgeQuery(int u, int v) {
         return graphSet[u].contains(v);
+    }
+
+    private int startNodeQuery() {
+        int s = random.nextInt(graphArray.length);
+        while (degreeQuery(s) == 0) s = random.nextInt(graphArray.length);
+        return s;
     }
 }
