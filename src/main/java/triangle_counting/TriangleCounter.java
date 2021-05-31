@@ -143,7 +143,7 @@ public class TriangleCounter {
                         w = graphArray[v][j];
                         degw = graphArray[w].length;
                         if (degw > degv || (degw == degv && v<w)) {
-                            if (graphSet[w].contains(u)) triangleCount++;
+                            if (graphSet[u].contains(w)) triangleCount++;
                         }
                     }
                 }

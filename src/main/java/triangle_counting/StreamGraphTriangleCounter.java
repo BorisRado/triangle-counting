@@ -20,7 +20,7 @@ public class StreamGraphTriangleCounter {
         for (int i = 0; i < r; i++) {
             estimators[i] = new Estimator();
         }
-        random = new Random(123);
+        random = new Random();
         m = 0;
     }
 
@@ -34,6 +34,7 @@ public class StreamGraphTriangleCounter {
 
         // Step 1
         for (Estimator est: estimators) {
+            est.batchReset();
             randInt = random.nextInt(m + B.length);
             if (randInt >= m) {
                 idx = randInt - m;
@@ -78,6 +79,7 @@ public class StreamGraphTriangleCounter {
             }
         }
 
+        // Update number of observed edges
         m += B.length;
     }
 
@@ -137,12 +139,10 @@ public class StreamGraphTriangleCounter {
         int cplus = a+b;
 
         if (cminus+cplus > 0) {
-            int phi = random.nextInt(cminus + cplus);
+            int phi = random.nextInt(cminus + cplus) + 1;
             ArrayList<Integer> i;
-            if (phi < cminus) {
-                // Keep existing r2
-            } else {
-                if (phi < cminus + a) {
+            if (phi > cminus) {
+                if (phi <= cminus + a) {
                     i = new ArrayList<>(Arrays.asList(est.r1[0], est.betax + phi - cminus));
                 } else {
                     i = new ArrayList<>(Arrays.asList(est.r1[1], est.betay + phi - cminus - a));
@@ -152,9 +152,8 @@ public class StreamGraphTriangleCounter {
             }
         }
 
-        // Update values
+        // Update c
         est.c += cplus;
-        est.setBeta(0, 0);
     }
 
     public long estimateTriangles() {
