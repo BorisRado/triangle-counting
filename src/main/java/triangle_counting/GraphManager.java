@@ -93,7 +93,7 @@ public class GraphManager {
             
             arrayGraph[node] = new int[nodeNeighbors.size()];            
             for (int destNodeInd = 0; destNodeInd < nodeNeighbors.size(); destNodeInd++) {
-                arrayGraph[node][destNodeInd] = nodeNeighbors.get(destNodeInd).intValue();
+                arrayGraph[node][destNodeInd] = nodeNeighbors.get(destNodeInd);
             }
         }
         return arrayGraph;
