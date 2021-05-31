@@ -6,7 +6,7 @@ seeds = [i+1 for i in range(5)]
 for seed in seeds:
     print("Seed:", seed)
     print(" Kronecker:")
-    for scale in range(3, 15):
+    for scale in range(3, 18):
         print("  Scale:", scale)
         G = kroneckerGenerator(scale, 16, seed)
         saveKronecker(G, scale, f"kronecker_{scale}_16_{seed}", folder)
