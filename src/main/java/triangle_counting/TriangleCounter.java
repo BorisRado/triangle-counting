@@ -38,37 +38,27 @@ public class TriangleCounter {
      */
     public static Long forwardAlgorithm(int [][] graph) {
         // define injective function eta - takes O(n log(n)) time
-        SortedSet<Pair<Integer, int[]>> pairs = new TreeSet<>((x, y) -> x.getSecond().length > y.getSecond().length ? 1 : -1);
-        
-        for (int i = 0; i < graph.length; i++)
-            pairs.add(new Pair<>(i, graph[i]));
-        
-        // store etas for each node in map (node -> eta)
-        Map<Integer, Integer> etas = new HashMap<Integer, Integer>();
-        int idx = 0;
-        for(Pair<Integer, int[]> pair: pairs) {
-            etas.put(pair.getFirst(), idx);
-            idx++;
-        }
-        
+        Set<Pair<Integer, int[]>> pairs = Utils.getSortedArrays(graph);
+        Map<Integer, Integer> etas = Utils.getEtasMap(pairs);
+
         // initialize arraylists
-        ArrayList<Integer>[] A = new ArrayList[graph.length];
+        ArrayList<Integer>[] A = (ArrayList<Integer>[]) new ArrayList[graph.length];
         for (int i = 0; i < graph.length; i++) {
-            A[i] = new ArrayList<>(1);
-            A[i].ensureCapacity(graph.length / 2);
+            A[i] = new ArrayList<>(0);
+            A[i].ensureCapacity(graph.length / 50);
         }
         
         int triangleCount = 0;
-        
+        // main part, in which we actually count triangles
         Iterator<Pair<Integer, int[]>> iterator = pairs.iterator();
         while (iterator.hasNext()) {
             Pair<Integer, int[]> pair = iterator.next();
             int v = pair.getFirst();
             for (int u: pair.getSecond()) {
-                if (etas.get(u) < etas.get(v))
-                    continue;
-                triangleCount += Utils.arrayIntersection(A[u], A[v]);
-                A[u].add(etas.get(v));
+                if (etas.get(u) > etas.get(v)) {
+                    triangleCount += Utils.arrayIntersection(A[u], A[v]);
+                    A[u].add(etas.get(v));
+                }
             }
         }
         return new Long(triangleCount);
