@@ -68,6 +68,11 @@ public class Estimator {
         return e;
     }
 
+    public void batchReset() {
+        setBeta(0, 0);
+        r2pos = -1;
+    }
+
     public void print() {
         String[] output = new String[13];
         output[0] = "r1=(";

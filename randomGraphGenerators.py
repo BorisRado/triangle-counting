@@ -36,14 +36,14 @@ def price(n, c, a):
 def barabasiAlbert(n, c):
     return price(n, c, c)
 
-def regularLattice(n):
+def regularLattice(n, k=2):
     G = [None] * n
     for i in range(n):
-        G[i] = [(i+j)%n for j in [-2,-1,1,2]]
+        G[i] = [(i+j)%n for j in [-(l+1) for l in range(k)] + [l+1 for l in range(k)]]
     return G
 
-def saveGraph(G, filename):
-    with open(filename, "w") as f:
+def saveGraph(G, filename, folder="data"):
+    with open(folder + "/" + filename + ".net", "w") as f:
         f.write(f"*vertices {len(G)}\n")
         for i in range(len(G)):
             f.write(f'{i+1} "{i+1}"\n')
