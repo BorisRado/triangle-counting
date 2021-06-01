@@ -125,19 +125,19 @@ public class Utils {
         return count;
     }
 
-    public static Set<Pair<Integer, int[]>> getSortedArrays(int[][] graph) {
-        SortedSet<Pair<Integer, int[]>> pairs = new TreeSet<>(
-                (x, y) -> x.getSecond().length > y.getSecond().length ? -1 : 1);
+    public static Set<Pair<Integer, ArrayList<Integer>>> getSortedArrays(ArrayList<Integer>[] graph) {
+        SortedSet<Pair<Integer, ArrayList<Integer>>> pairs = new TreeSet<>(
+                (x, y) -> x.getSecond().size() > y.getSecond().size() ? -1 : 1);
 
         for (int i = 0; i < graph.length; i++)
             pairs.add(new Pair<>(i, graph[i]));
         return pairs;
     }
     
-    public static Map<Integer, Integer> getEtasMap(Set<Pair<Integer, int[]>> pairs) {
+    public static Map<Integer, Integer> getEtasMap(Set<Pair<Integer, ArrayList<Integer>>> pairs) {
         Map<Integer, Integer> etas = new HashMap<Integer, Integer>();
         int idx = 0;
-        for(Pair<Integer, int[]> pair: pairs) {
+        for(Pair<Integer, ArrayList<Integer>> pair: pairs) {
             etas.put(pair.getFirst(), idx);
             idx++;
         }

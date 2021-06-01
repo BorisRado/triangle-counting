@@ -27,6 +27,10 @@ public class Tester {
             try {
                 ArrayList<Integer>[] graph = GraphManager.readGraph(file.getAbsolutePath(), 1, false);
                 runAllTests(graph, file.getName(), outputFile);
+                
+                // try to clean the memory
+                graph = null;
+                System.gc();
             } catch (IOException e) {
                 e.printStackTrace();            
             }
@@ -40,7 +44,7 @@ public class Tester {
         writeGraphInfo(graph, graphName, outputFile);
 
         setBasedAlgorithms(GraphManager.toSetRepresentation(graph), graphName, outputFile);
-        adjacencyArrayBasedAlgorithms(GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
+        adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
         adjMatrixBasedAlgorithms(GraphManager.toAdjacencyMatrix(graph), graphName, outputFile);
         sparseAdjMatrixBasedAlgorithms(GraphManager.toAdjacencyMySparseMatrix(graph), graphName, outputFile);
         sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName, outputFile);
@@ -50,8 +54,9 @@ public class Tester {
         outputFile.println(Utils.printJson("},", 1));
     }
     
-    public static void adjacencyArrayBasedAlgorithms(int[][] graph, String graphName, PrintWriter outputFile) {
+    public static void adjacencyArrayBasedAlgorithms(ArrayList<Integer>[] graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.forwardAlgorithm(graph), "Forward algorithm", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.compactForwardAlgorithm(graph), "Compact Forward algorithm", graphName, outputFile);
     }
     
     public static void setBasedAlgorithms(Set<Integer>[] graph, String graphName, PrintWriter outputFile) {
@@ -70,9 +75,9 @@ public class Tester {
     }
     
     public static void sparseRealMatrixBasedAlgorithms(SparseRealMatrix graph, String graphName, PrintWriter outputFile) {
-        Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Sparse real matrix", graphName, outputFile);
+        //Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Sparse real matrix", graphName, outputFile);
         //Executor.execute(() -> TriangleCounter.exactEigenTriangle(graph), "Eigen exact matrix", graphName, outputFile);
-        Executor.execute(() -> TriangleCountingEstimator.eigenTriangle(graph), "Eigen estimation matrix", graphName, outputFile);
+        //Executor.execute(() -> TriangleCountingEstimator.eigenTriangle(graph), "Eigen estimation matrix", graphName, outputFile);
     }
 
     public static void streamGraphEstimateAlgorithms(int[][] edgeList, String graphName, PrintWriter outputFile) {
