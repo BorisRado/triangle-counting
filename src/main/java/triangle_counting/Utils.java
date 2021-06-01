@@ -1,17 +1,64 @@
 package triangle_counting;
 
-import org.apache.commons.math3.linear.SparseRealMatrix;
+import org.apache.commons.math3.linear.*;
+import org.apache.commons.math3.random.UnitSphereRandomVectorGenerator;
 
+import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Utils {
 
-    public static double LanczosMethod(SparseRealMatrix A, int i) {
+    public static double[] lanczosMethod(SparseRealMatrix A, int m) {
+        RealMatrix T;
+        T = getTridiagonalMatrix(A, m);
+        EigenDecomposition ed = new EigenDecomposition(T);
 
-
-        return 0d;
+        return ed.getRealEigenvalues();
     }
+    public static RealMatrix getTridiagonalMatrix(SparseRealMatrix t, int m) {
+        double[] alpha = new double[m + 1];
+        double[] betta = new double[m + 1];
+
+        int n = t.getColumnDimension();
+
+        UnitSphereRandomVectorGenerator uvg = new UnitSphereRandomVectorGenerator(n);
+
+        RealVector v0 = new ArrayRealVector(n);
+        RealVector v1 = new ArrayRealVector(uvg.nextVector());
+
+        RealVector wx = new ArrayRealVector(n);
+        RealVector w = new ArrayRealVector(n);
+
+        //RealMatrix t = new Array2DRowRealMatrix(a);
+        for (int i = 1; i < m; i++) {
+            wx = t.operate(v1);
+            alpha[i] = wx.dotProduct(v1);
+            w = wx.subtract(v1.mapMultiply(alpha[i])).subtract(v0.mapMultiply(betta[i]));
+            betta[i + 1] = w.getNorm();
+            v0 = v1.copy();
+            v1 = w.mapMultiply(1 / betta[i + 1]);
+        }
+
+        return makeTridiagonalMatrix(alpha, betta);
+    }
+
+    public static RealMatrix makeTridiagonalMatrix(double[] alpha, double[] betta) {
+        int m = alpha.length - 1;
+        double[][] T = new double[m][m];
+
+        T[0][0] = alpha[1];
+        for (int i = 1; i < alpha.length - 1; i++) {
+            T[i][i] = alpha[i + 1];
+            T[i - 1][i] = betta[i + 1];
+            T[i][i - 1] = betta[i + 1];
+        }
+        //return T;
+
+        RealMatrix rm = new Array2DRowRealMatrix(T);
+        return  rm;
+    }
+
 
     public static ArrayList<Integer> arrayToList(int[] array) {
         ArrayList<Integer> list = new ArrayList<>(array.length);

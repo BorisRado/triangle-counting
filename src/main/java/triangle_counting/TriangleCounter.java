@@ -10,6 +10,7 @@ import org.apache.commons.math3.util.Pair;
 
 import java.lang.Math;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
 public class TriangleCounter {
@@ -225,6 +226,7 @@ public class TriangleCounter {
         return new Long(result);
     }
 
+
     /**
      * https://www.vldb.org/pvldb/vol6/p1870-aduri.pdf
      * @param edgeList edge list representation of the network - assuming all edges are unique and
@@ -263,4 +265,5 @@ public class TriangleCounter {
         TriangleCountingEstimator tce = new TriangleCountingEstimator(graphSet, graphArray);
         return tce.Tetris((int)r, (int)l, 25);
     }
+
 }

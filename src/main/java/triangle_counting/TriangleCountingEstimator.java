@@ -1,9 +1,13 @@
 package triangle_counting;
 
+import org.apache.commons.math3.linear.SparseRealMatrix;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+
+import static java.lang.Math.round;
 
 public class TriangleCountingEstimator {
     Set<Integer>[] graphSet;
@@ -70,6 +74,30 @@ public class TriangleCountingEstimator {
         }
         return R;
     }
+
+    /**
+     * https://www.math.cmu.edu/~ctsourak/tsourICDM08.pdf
+     * @param adjMatrix SparseRealMatrix representation of adjacency matrix.
+     * @return estimated number of triangles in the network
+     */
+    public static Long eigenTriangle(SparseRealMatrix adjMatrix) {
+        // See https://www.math.cmu.edu/~ctsourak/tsourICDM08.pdf
+        // Different as in their metod where lanczos method is calculated
+        // somehow on every iteration. In paper they stated
+        // 30 top eigenvalues are more than enough for estimation
+
+        double[] eigenvalues;
+        eigenvalues = Utils.lanczosMethod(adjMatrix, 30);
+        double triangleCount = 0;
+        for (double v: eigenvalues) {
+            triangleCount += Math.pow(v, 3);
+        }
+        long result = round(triangleCount) / 6;
+
+        return result;
+
+    }
+
 
     private double edgeCountEstimator(ArrayList<int[]> R, int lmix) {
         // This isn't optimized etc. For our purposes it's not needed, because we know the exact edge count.
