@@ -42,9 +42,12 @@ public class GraphManager {
                 Integer srcNode = Integer.parseInt(edgeNodes[0]) - 1;
                 Integer dstNode = Integer.parseInt(edgeNodes[1]) - 1;
                 
-                graph[srcNode].add(dstNode);
+                // do not allow multigraphs, otherwise some algorithm might return inconsistent values
+                // should probably change the type to set so that checking the if element already contained takes O(1)
+                if (!graph[srcNode].contains(dstNode))
+                    graph[srcNode].add(dstNode);
                 
-                if (!isDirected) 
+                if (!isDirected && !graph[dstNode].contains(srcNode))
                     graph[dstNode].add(srcNode);
             }
             
@@ -93,7 +96,7 @@ public class GraphManager {
             
             arrayGraph[node] = new int[nodeNeighbors.size()];            
             for (int destNodeInd = 0; destNodeInd < nodeNeighbors.size(); destNodeInd++) {
-                arrayGraph[node][destNodeInd] = nodeNeighbors.get(destNodeInd).intValue();
+                arrayGraph[node][destNodeInd] = nodeNeighbors.get(destNodeInd);
             }
         }
         return arrayGraph;

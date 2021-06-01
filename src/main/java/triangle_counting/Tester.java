@@ -76,7 +76,7 @@ public class Tester {
     }
 
     public static void streamGraphEstimateAlgorithms(int[][] edgeList, String graphName, PrintWriter outputFile) {
-        Executor.execute(() -> TriangleCounter.streamGraphEstimate(edgeList, edgeList.length > 20 ? edgeList.length / 20 : 1,  edgeList.length > 10 ? edgeList.length / 10 : edgeList.length),
+        Executor.execute(() -> TriangleCounter.streamGraphEstimate(edgeList, edgeList.length > 20 ? edgeList.length / 20 : 1, edgeList.length > 10 ? edgeList.length / 10 : edgeList.length),
                 "Stream Graph Estimate", graphName, outputFile);
     }
 
