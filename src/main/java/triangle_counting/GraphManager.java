@@ -116,8 +116,13 @@ public class GraphManager {
     }
 
     public static MySparseMatrix toAdjacencyMySparseMatrix(ArrayList<Integer>[] graph) {
-        // TODO - make sure that graph is simple
+        // make sure the graph is simple
         return new MySparseMatrix(graph);
+    }
+
+    public static MySparseMatrix toIncidentMySparseMatrix(ArrayList<Integer>[] graph) {
+        // make sure the graph is simple
+        return new MySparseMatrix(graph, true);
     }
 
     public static SparseRealMatrix toAdjacencySparseRealMatrix(ArrayList<Integer>[] graph) {

@@ -2,6 +2,7 @@ package triangle_counting;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
 
 public class MySparseMatrix {
     long[] values;
@@ -44,10 +45,10 @@ public class MySparseMatrix {
         }
         values = new long[m];
         columns = new int[m];
-        rows = new int[graph.length+1];
+        rows = new int[graph.length + 1];
         rows[0] = 0;
-        ArrayList<Integer> adj;
 
+        ArrayList<Integer> adj;
         int counter = 0;
         for (int i = 0; i < graph.length; i++) {
             adj = graph[i];
@@ -64,6 +65,96 @@ public class MySparseMatrix {
             }
             rows[i+1] = counter;
         }
+    }
+
+    /**
+     * Create MySparseMatrix object of graph
+     * @param graph simple graph to represent with this
+     * @param incident create incident matrix? If false, adjacency matrix is created
+     */
+    public MySparseMatrix(ArrayList<Integer>[] graph, boolean incident) {
+        if (!incident) new MySparseMatrix(graph);
+        else {
+            int m = 0;
+            for (ArrayList<Integer> adj: graph) {
+                m += adj.size();
+            }
+            values = new long[m];
+            columns = new int[m];
+            rows = new int[m/2 + 1];
+            rows[0] = 0;
+
+            //ArrayList<Integer> adj;
+            int counter = 0;
+            for (int i = 0; i < graph.length; i++) {
+                for (Integer j: graph[i]) {
+                    if (j>i) {
+                        values[counter] = 1;
+                        values[counter+1] = 1;
+                        columns[counter++] = i;
+                        columns[counter++] = j;
+                        rows[counter/2] = counter;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 'A Task-Based Linear Algebra Building Blocks
+     * Approach for Scalable Graph Analytics'
+     * by Michael M. Wolf, Jonathan W. Berry, and Dylan T. Stark,
+     * available at https://www.osti.gov/servlets/purl/1531050
+     * @param B Incident Matrix in MySparseMatrix format
+     * @return number of triangles in this
+     */
+    public long MiniTri(MySparseMatrix B) {
+        long sum = 0;
+        int end, x, y, jidx, jx, jy;
+        for (int i = 0; i < rows.length-1; i++) {
+            end = rows[i+1];
+            for (int xidx = rows[i]; xidx < end; xidx++) {
+                x = columns[xidx];
+                for (int yidx = xidx+1; yidx < end; yidx++) {
+                    y = columns[yidx];
+                    for (int j = 0; j < B.rows.length-1; j++) {
+                        jidx = B.rows[j];
+                        jx = B.columns[jidx];
+                        jy = B.columns[jidx+1];
+                        if ((jx == x && jy == y) || (jx == y && jy == x)) {
+                            // Found non-zero element of C
+                            sum++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return sum / 3;
+    }
+
+    /**
+     * 'A Task-Based Linear Algebra Building Blocks
+     * Approach for Scalable Graph Analytics'
+     * by Michael M. Wolf, Jonathan W. Berry, and Dylan T. Stark,
+     * available at https://www.osti.gov/servlets/purl/1531050
+     * @param B Incident Matrix in set representation
+     * @return number of triangles in this
+     */
+    public long MiniTri(Set<Integer>[] B) {
+        long sum = 0;
+        int end, x, y;
+        for (int i = 0; i < rows.length - 1; i++) {
+            end = rows[i+1];
+            for (int xidx = rows[i]; xidx < end; xidx++) {
+                x = columns[xidx];
+                for (int yidx = xidx+1; yidx < end; yidx++) {
+                    y = columns[yidx];
+                    if (B[x].contains(y)) sum++;
+                }
+            }
+        }
+        return sum / 3;
     }
 
     /**

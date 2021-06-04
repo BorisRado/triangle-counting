@@ -147,10 +147,14 @@ public class TriangleCounter {
         return adjMatrix.countTriangles();
     }
 
+    // see https://www.osti.gov/servlets/purl/1531050
+    public static Long MiniTri(MySparseMatrix adjMatrix, MySparseMatrix incMatrix) { return adjMatrix.MiniTri(incMatrix); }
+
+    // see https://www.osti.gov/servlets/purl/1531050
+    public static Long MiniTri(MySparseMatrix graphAdj, Set<Integer>[] graphSet) { return graphAdj.MiniTri(graphSet); }
+
+    // see https://iss.oden.utexas.edu/?p=projects/galois/analytics/triangle_counting
     public static Long edgeIterator(Set<Integer>[] graph) {
-        // see
-        // https://iss.oden.utexas.edu/?p=projects/galois/analytics/triangle_counting
-        // for future reference
         long triangleCount = 0;
         for (int n = 0; n < graph.length; n++) {
             for (Integer m : graph[n]) {
