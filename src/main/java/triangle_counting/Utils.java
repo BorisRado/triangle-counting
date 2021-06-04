@@ -20,13 +20,14 @@ import java.util.stream.Collectors;
 public class Utils {
 
     public static double[] lanczosMethod(SparseRealMatrix A, int m) {
-        RealMatrix T;
-        T = getTridiagonalMatrix(A, m);
-        EigenDecomposition ed = new EigenDecomposition(T);
+        // RealMatrix T;
+        double[][] T = getTridiagonalMatrix(A, m);
+        EigenDecomposition ed = new EigenDecomposition(T[0], T[1]);
 
         return ed.getRealEigenvalues();
     }
-    public static RealMatrix getTridiagonalMatrix(SparseRealMatrix t, int m) {
+
+    public static double[][] getTridiagonalMatrix(SparseRealMatrix t, int m) {
         double[] alpha = new double[m + 1];
         double[] betta = new double[m + 1];
 
@@ -37,8 +38,7 @@ public class Utils {
         RealVector v0 = new ArrayRealVector(n);
         RealVector v1 = new ArrayRealVector(uvg.nextVector());
 
-        RealVector wx = new ArrayRealVector(n);
-        RealVector w = new ArrayRealVector(n);
+        RealVector w, wx;
 
         //RealMatrix t = new Array2DRowRealMatrix(a);
         for (int i = 1; i < m; i++) {
@@ -50,7 +50,11 @@ public class Utils {
             v1 = w.mapMultiply(1 / betta[i + 1]);
         }
 
-        return makeTridiagonalMatrix(alpha, betta);
+        double[][] T = new double[2][];
+        T[0] = Arrays.copyOfRange(alpha, 1, alpha.length);
+        T[1] = Arrays.copyOfRange(betta, 2, betta.length);
+        // return makeTridiagonalMatrix(alpha, betta);
+        return T;
     }
 
     public static RealMatrix makeTridiagonalMatrix(double[] alpha, double[] betta) {

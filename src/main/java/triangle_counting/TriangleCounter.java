@@ -277,6 +277,29 @@ public class TriangleCounter {
     }
 
     /**
+     * https://www.math.cmu.edu/~ctsourak/tsourICDM08.pdf
+     * @param adjMatrix SparseRealMatrix representation of adjacency matrix.
+     * @return estimated number of triangles in the network
+     */
+    public static Long eigenTriangle(SparseRealMatrix adjMatrix) {
+        // See https://www.math.cmu.edu/~ctsourak/tsourICDM08.pdf
+        // Different as in their metod where lanczos method is calculated
+        // somehow on every iteration. In paper they stated
+        // 30 top eigenvalues are more than enough for estimation
+
+        double[] eigenvalues;
+        eigenvalues = Utils.lanczosMethod(adjMatrix, 30);
+        double triangleCount = 0;
+        for (double v: eigenvalues) {
+            triangleCount += Math.pow(v, 3);
+        }
+        long result = round(triangleCount) / 6;
+
+        return result;
+
+    }
+
+    /**
      * https://www.vldb.org/pvldb/vol6/p1870-aduri.pdf
      * 
      * @param edgeList edge list representation of the network - assuming all edges
