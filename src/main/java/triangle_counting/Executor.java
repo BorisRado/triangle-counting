@@ -12,25 +12,38 @@ public class Executor {
      */
     public static void execute(Callable<Long> algorithm, String algorithmName, String graphName, PrintWriter outputFile) {
         
-        long start = System.currentTimeMillis();
+        int iterationCount = 32;
+        long[] times = new long[iterationCount];
+        long[] results = new long[iterationCount];
         
-        FutureTask<Long> futureTask = new FutureTask<Long>(algorithm);
-        Thread thread = new Thread(futureTask);
-        thread.start();
-        
-        Long result = -1L;
-        try {
-            result = futureTask.get();
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (int i = 0; i < iterationCount; i++) {            
+            long start = System.currentTimeMillis();
+            
+            FutureTask<Long> futureTask = new FutureTask<Long>(algorithm);
+            Thread thread = new Thread(futureTask);
+            thread.start();
+            
+            Long result = -1L;
+            try {
+                result = futureTask.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            long end = System.currentTimeMillis();
+            times[i] = end - start;
+            results[i] = result;
         }
-        long end = System.currentTimeMillis();
+        
+        double avgExecutionTime = Utils.computeMean(times);
+        double seExecutionTime = Utils.computeStandardDeviation(times) / Math.sqrt(iterationCount);
+        double avgTriangleCount = Utils.computeMean(results);
         
         // write results to output file
         outputFile.println(Utils.printJson("{", 3));
         outputFile.println(Utils.printJson("algorithm", algorithmName, 4));
-        outputFile.println(Utils.printJson("triangleCount", result, 4));
-        outputFile.println(Utils.printJson("executionTime", (end-start), 4));
+        outputFile.println(Utils.printJson("triangleCount", avgTriangleCount, 4));
+        outputFile.println(Utils.printJson("avgExecutionTime", avgExecutionTime, 4));
+        outputFile.println(Utils.printJson("seExecutionTime", seExecutionTime, 4));
         outputFile.println(Utils.printJson("},", 3));
     }
 

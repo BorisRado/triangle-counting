@@ -12,7 +12,7 @@ class Result:
         self.executionTime = result["executionTime"]
         self.nodesCount = -1
         self.edgesCount = -1
-    
+
     def addInfo(self, nodes, edges):
         self.nodesCount = nodes
         self.edgesCount = edges
@@ -21,7 +21,7 @@ class Algorithm:
     def __init__(self, name):
         self.name = name
         self.data = {}
-    
+
     def addResult(self, graphName: str, numNodes: int, numEdges: int, result: Result):
         if graphName not in self.data:
             self.data[graphName] = {}
@@ -29,7 +29,7 @@ class Algorithm:
             self.data[graphName][numNodes] = []
         result.addInfo(numNodes, numEdges)
         self.data[graphName][numNodes].append(result)
-    
+
     def getAverageTimes(self, graph):
         xs = sorted(i for i in self.data[graph])
         ys = []
@@ -47,7 +47,7 @@ def readResults(filename, algorithms=None):
         s = s.replace(",}", "}")
         s = s.replace(",]", "]")
         data = json.loads(s)
-    
+
     if algorithms is None:
         algorithms = {}
     for graphRes in data:
@@ -75,7 +75,7 @@ def plotAverageTimes(algorithms, graphNames):
         plt.ylabel("Time in ms in $\log$ scale")
         plt.show()
 
-def readGraph(filename):
+def simpleReadResults(filename):
     with open(filename, "r") as f:
         s = f.read()
         s = s.replace("\t", "")
@@ -83,17 +83,17 @@ def readGraph(filename):
         s = s.replace(",}", "}")
         s = s.replace(",]", "]")
         data = json.loads(s)
-
-    nodes, rezs = [], {}
-    for graphRes in data:
-        nodes.append(graphRes["nodesCount"])
-        for result in graphRes["results"]:
-            algorithm = result["algorithm"]
-            if algorithm not in rezs:
-                rezs[algorithm] = []
-
-            rezs[algorithm].append(result["executionTime"])
-    return nodes, rezs
+    return data
+    # nodes, rezs = [], {}
+    # for graphRes in data:
+    #     nodes.append(graphRes["nodesCount"])
+    #     for result in graphRes["results"]:
+    #         algorithm = result["algorithm"]
+    #         if algorithm not in rezs:
+    #             rezs[algorithm] = []
+    #
+    #         rezs[algorithm].append(result["executionTime"])
+    # return nodes, rezs
 
 def orderArrays(nodes, results):
     order = np.array(nodes).argsort()
@@ -140,7 +140,7 @@ def plotTimesByGraph(filename):
             for rez in rezs:
                 for algo in rezs[rez]:
                     rezs[rez][algo] /= divisors[rez]
-            
+
             fig, ax = plt.subplots()
             key = list(rezs.keys())[0]
             algs = {alg for alg in rezs[key].keys()}
@@ -158,10 +158,37 @@ def plotTimesByGraph(filename):
             plt.ylabel("Time in ms")
             plt.show()
 
+def plotBarChart(filename, algorithms):
+    plt.style.use("ggplot")
+    fig, ax = plt.subplots(figsize = (18,10))
+    bar_width = .10
+
+    results = simpleReadResults(filename)
+    x = np.arange(len(results))
+    algorithmCount = len(algorithms)
+
+    graphs = [g["graphName"] for g in results]
+    for i, algo in enumerate(algorithms):
+        algo_times = [tmp["avgExecutionTime"] for graphRes in results for tmp in graphRes["results"] if tmp["algorithm"] == algo]
+        ses = [tmp["seExecutionTime"] for graphRes in results for tmp in graphRes["results"] if tmp["algorithm"] == algo]
+        ax.bar(x + bar_width * (i - (algorithmCount - 1) / 2), algo_times, bar_width, label = algo, yerr = ses)
+    ax.set_xticks(x)
+    ax.set_xticklabels(graphs)
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.ylabel("Execution time")
+    # plt.tight_layout()
+    plt.savefig("test.png", bbox_inches="tight")
+
 if __name__ == "__main__":
     # nodes, results = readGraph("results.json")
     # nodes, results = orderArrays(nodes, results)
     # plotResults(nodes, results)
     # plotTimesByGraph("results.json")
-    algs = readResults("results.json")
-    plotAverageTimes(algs, ["barabasi", "kronecker", "lattice"])
+    # algs = readResults("results.json")
+    # plotAverageTimes(algs, ["barabasi", "kronecker", "lattice"])
+    plotBarChart("results.json", ["Edge iterator", "Forward algorithm",
+                "Compact Forward algorithm", "Cycle counting", "Sparse + Set Algorithm",
+                "Neighbour pairs - single",
+                "Sparse adjacency matrix search 1"])
