@@ -110,19 +110,19 @@ public class MySparseMatrix {
      */
     public long MiniTri(MySparseMatrix B) {
         long sum = 0;
-        int end, x, y, jidx, jx, jy;
+        int end, jidx, jx, jy, temp;
         for (int i = 0; i < rows.length-1; i++) {
             end = rows[i+1];
-            for (int xidx = rows[i]; xidx < end; xidx++) {
-                x = columns[xidx];
-                for (int yidx = xidx+1; yidx < end; yidx++) {
-                    y = columns[yidx];
-                    for (int j = 0; j < B.rows.length-1; j++) {
-                        jidx = B.rows[j];
-                        jx = B.columns[jidx];
-                        jy = B.columns[jidx+1];
-                        if ((jx == x && jy == y) || (jx == y && jy == x)) {
-                            // Found non-zero element of C
+            for (int j = 0; j < B.rows.length-1; j++) {
+                jidx = B.rows[j];
+                jx = B.columns[jidx];
+                jy = B.columns[jidx+1];
+                temp = 0;
+                for (int k = rows[i]; k < end; k++) {
+                    if (columns[k] == jx || columns[k] == jy) {
+                        temp++;
+                        if (temp == 2) {
+                            // Found non-zero element of C (triangle)
                             sum++;
                             break;
                         }
@@ -134,14 +134,15 @@ public class MySparseMatrix {
     }
 
     /**
+     * My algorithm; slightly based on the ideas of
      * 'A Task-Based Linear Algebra Building Blocks
      * Approach for Scalable Graph Analytics'
      * by Michael M. Wolf, Jonathan W. Berry, and Dylan T. Stark,
      * available at https://www.osti.gov/servlets/purl/1531050
-     * @param B Incident Matrix in set representation
+     * @param B Graph in set representation
      * @return number of triangles in this
      */
-    public long MiniTri(Set<Integer>[] B) {
+    public long SparseAndSetAlgo(Set<Integer>[] B) {
         long sum = 0;
         int end, x, y;
         for (int i = 0; i < rows.length - 1; i++) {

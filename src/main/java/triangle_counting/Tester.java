@@ -47,8 +47,8 @@ public class Tester {
         adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
         adjMatrixBasedAlgorithms(GraphManager.toAdjacencyMatrix(graph), graphName, outputFile);
         sparseAdjMatrixBasedAlgorithms(GraphManager.toAdjacencyMySparseMatrix(graph), graphName, outputFile);
-        // MiniTriAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toIncidentMySparseMatrix(graph), graphName, outputFile);
-        MiniTriSetAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toSetRepresentation(graph), graphName, outputFile);
+        MiniTriAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toIncidentMySparseMatrix(graph), graphName, outputFile);
+        SparseAndSetAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toSetRepresentation(graph), graphName, outputFile);
         sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName, outputFile);
         streamGraphEstimateAlgorithms(GraphManager.toEdgeList(graph), graphName, outputFile);
         randomWalkAlgorithms(GraphManager.toSetRepresentation(graph), GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
@@ -80,8 +80,8 @@ public class Tester {
         Executor.execute(() -> TriangleCounter.MiniTri(adjMatrix, incMatrix), "Mini Tri Algorithm", graphName, outputFile);
     }
 
-    public static void MiniTriSetAlgorithm(MySparseMatrix graphAdj, Set<Integer>[] graphSet, String graphName, PrintWriter outputFile) {
-        Executor.execute(() -> TriangleCounter.MiniTri(graphAdj, graphSet), "Mini Tri Set Algorithm", graphName, outputFile);
+    public static void SparseAndSetAlgorithm(MySparseMatrix graphAdj, Set<Integer>[] graphSet, String graphName, PrintWriter outputFile) {
+        Executor.execute(() -> TriangleCounter.MiniTri(graphAdj, graphSet), "Sparse + Set Algorithm", graphName, outputFile);
     }
     
     public static void sparseRealMatrixBasedAlgorithms(SparseRealMatrix graph, String graphName, PrintWriter outputFile) {
