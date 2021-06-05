@@ -5,6 +5,75 @@ import json
 """
 Very initial version of the script that will be used for plotting.
 """
+class Result:
+    def __init__(self, result):
+        self.algorithm = result["algorithm"]
+        self.triangleCount = result["triangleCount"]
+        self.executionTime = result["executionTime"]
+        self.nodesCount = -1
+        self.edgesCount = -1
+    
+    def addInfo(self, nodes, edges):
+        self.nodesCount = nodes
+        self.edgesCount = edges
+
+class Algorithm:
+    def __init__(self, name):
+        self.name = name
+        self.data = {}
+    
+    def addResult(self, graphName: str, numNodes: int, numEdges: int, result: Result):
+        if graphName not in self.data:
+            self.data[graphName] = {}
+        if numNodes not in self.data[graphName]:
+            self.data[graphName][numNodes] = []
+        result.addInfo(numNodes, numEdges)
+        self.data[graphName][numNodes].append(result)
+    
+    def getAverageTimes(self, graph):
+        xs = sorted(i for i in self.data[graph])
+        ys = []
+        for x in xs:
+            times = [res.executionTime for res in self.data[graph][x]]
+            ys.append(round(sum(times) / len(times)))
+        return xs, ys
+
+
+def readResults(filename, algorithms=None):
+    with open(filename, "r") as f:
+        s = f.read()
+        s = s.replace("\t", "")
+        s = s.replace("\n", "")
+        s = s.replace(",}", "}")
+        s = s.replace(",]", "]")
+        data = json.loads(s)
+    
+    if algorithms is None:
+        algorithms = {}
+    for graphRes in data:
+        graphName = graphRes["graphName"].split("_")[0]
+        nodesCount = graphRes["nodesCount"]
+        edgesCount = graphRes["edgesCount"]
+        for result in graphRes["results"]:
+            alg = result["algorithm"]
+            if alg not in algorithms:
+                algorithms[alg] = Algorithm(alg)
+            algorithms[alg].addResult(graphName, nodesCount, edgesCount, Result(result))
+    return algorithms
+
+def plotAverageTimes(algorithms, graphNames):
+    for graphName in graphNames:
+        fig, ax = plt.subplots()
+        for alg in algorithms:
+            xs, ys = algorithms[alg].getAverageTimes(graphName)
+            ax.plot(xs, ys, label=alg)
+        ax.set_xscale("symlog")
+        ax.set_yscale("symlog")
+        plt.legend()
+        plt.title(f"Average times for {graphName} graph.")
+        plt.xlabel("Number of nodes in $\log$ scale")
+        plt.ylabel("Time in ms in $\log$ scale")
+        plt.show()
 
 def readGraph(filename):
     with open(filename, "r") as f:
@@ -90,7 +159,9 @@ def plotTimesByGraph(filename):
             plt.show()
 
 if __name__ == "__main__":
-    nodes, results = readGraph("results.json")
-    nodes, results = orderArrays(nodes, results)
-    plotResults(nodes, results)
+    # nodes, results = readGraph("results.json")
+    # nodes, results = orderArrays(nodes, results)
+    # plotResults(nodes, results)
     # plotTimesByGraph("results.json")
+    algs = readResults("results.json")
+    plotAverageTimes(algs, ["barabasi", "kronecker", "lattice"])
