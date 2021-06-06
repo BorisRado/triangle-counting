@@ -190,5 +190,5 @@ if __name__ == "__main__":
     # plotAverageTimes(algs, ["barabasi", "kronecker", "lattice"])
     plotBarChart("results.json", ["Edge iterator", "Forward algorithm",
                 "Compact Forward algorithm", "Cycle counting", "Sparse + Set Algorithm",
-                "Neighbour pairs - single",
+                "Neighbour pairs - single", "Node iterator",
                 "Sparse adjacency matrix search 1"])

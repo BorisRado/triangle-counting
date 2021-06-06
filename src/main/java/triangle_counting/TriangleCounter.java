@@ -177,6 +177,26 @@ public class TriangleCounter {
         }
         return new Long(triangleCount);
     }
+    
+    public static Long nodeIterator(int[][] graph) {
+        // sort edge lists for all nodes
+        for (int i = 0; i < graph.length; i++)
+            Arrays.parallelSort(graph[i]);
+        
+        long traingleCount = 0L;
+        for (int n = 0; n < graph.length; n++) {
+            for (int a: graph[n]) {
+                if (a >= n)
+                    continue;
+                for (int b: graph[n]) {
+                    if (b > n && Arrays.binarySearch(graph[a], b) > 0)
+                        traingleCount++;
+                }
+            }
+        }
+        
+        return new Long(traingleCount);
+    }
 
     /**
      * `CS167: Reading in Algorithms Counting Triangles` by Tim Roughgarden. Using 2

@@ -47,6 +47,7 @@ public class Tester {
         adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
         adjMatrixBasedAlgorithms(GraphManager.toAdjacencyMatrix(graph), graphName, outputFile);
         sparseAdjMatrixBasedAlgorithms(GraphManager.toAdjacencyMySparseMatrix(graph), graphName, outputFile);
+        primitiveAdjacencyArrayBasedAlgorithms(GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
         //MiniTriAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toIncidentMySparseMatrix(graph), graphName, outputFile);
         SparseAndSetAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toSetRepresentation(graph), graphName, outputFile);
         sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName, outputFile);
@@ -59,6 +60,10 @@ public class Tester {
     public static void adjacencyArrayBasedAlgorithms(ArrayList<Integer>[] graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.forwardAlgorithm(graph), "Forward algorithm", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.compactForwardAlgorithm(graph), "Compact Forward algorithm", graphName, outputFile);
+    }
+    
+    public static void primitiveAdjacencyArrayBasedAlgorithms(int[][] graph, String graphName, PrintWriter outputFile) {
+        Executor.execute(() -> TriangleCounter.nodeIterator(graph), "Node iterator", graphName, outputFile);
     }
     
     public static void setBasedAlgorithms(Set<Integer>[] graph, String graphName, PrintWriter outputFile) {
