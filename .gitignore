@@ -4,3 +4,5 @@ target
 .project
 results.json
 *.png
+__pycache__
+generated_graphs/

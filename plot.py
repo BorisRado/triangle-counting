@@ -2,9 +2,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 
+plt.style.use("ggplot")
+
 """
 Very initial version of the script that will be used for plotting.
 """
+
+FIG_SIZE = (18, 10)
+IMAGES_FOLDER = "images"
+
 class Result:
     def __init__(self, result):
         self.algorithm = result["algorithm"]
@@ -158,28 +164,74 @@ def plotTimesByGraph(filename):
             plt.ylabel("Time in ms")
             plt.show()
 
-def plotBarChart(filename, algorithms):
-    plt.style.use("ggplot")
-    fig, ax = plt.subplots(figsize = (18,10))
+def get_ordered_results(filename, algorithms, sort = False):
+    # returns a tuple containing
+    # 1. list containing file names
+    # 2. list containing the number of nodes of each file (graph)
+    # 3. a dictionary, containing the times for each algorithm
+    #    each algorithm in algorithms get its own list
+    # 4. Standard errors
+    # 5. the actual results
+    # if sort = True, the results are ordered in ascending order wrt number of nodes
+    results = simpleReadResults(filename)
+    graph_names = np.array([g["graphName"] for g in results])
+    ns = np.array([g["nodesCount"] for g in results])
+    algo_times, ses = {}, {}
+    for i, algo in enumerate(algorithms):
+        algo_times[algo] = np.array([tmp["avgExecutionTime"] for graphRes in results
+                            for tmp in graphRes["results"] if tmp["algorithm"] == algo])
+        ses[algo] = np.array([tmp["seExecutionTime"] for graphRes in results
+                            for tmp in graphRes["results"] if tmp["algorithm"] == algo])
+
+
+    if sort == True:
+        order = np.argsort(np.array(ns))
+        ns = ns[order]
+        graph_names = graph_names[order]
+        for algorithm in algorithms:
+            algo_times[algorithm] = algo_times[algorithm][order]
+            ses[algorithm] = ses[algorithm][order]
+
+    return graph_names, ns, algo_times, ses, results
+
+def plotBarChart(filename, algorithms, figname = None):
+    fig, ax = plt.subplots(figsize = FIG_SIZE)
     bar_width = .10
 
-    results = simpleReadResults(filename)
+    graph_names, _, all_algo_times, all_ses, results = get_ordered_results(filename, algorithms, sort = False)
     x = np.arange(len(results))
     algorithmCount = len(algorithms)
-
-    graphs = [g["graphName"] for g in results]
-    for i, algo in enumerate(algorithms):
-        algo_times = [tmp["avgExecutionTime"] for graphRes in results for tmp in graphRes["results"] if tmp["algorithm"] == algo]
-        ses = [tmp["seExecutionTime"] for graphRes in results for tmp in graphRes["results"] if tmp["algorithm"] == algo]
-        ax.bar(x + bar_width * (i - (algorithmCount - 1) / 2), algo_times, bar_width, label = algo, yerr = ses)
+    for i, algorithm in enumerate(algorithms):
+        algo_times = all_algo_times[algorithm]
+        ses = all_ses[algorithm]
+        ax.bar(x + bar_width * (i - (algorithmCount - 1) / 2), algo_times, bar_width, label = algorithm, yerr = ses)
     ax.set_xticks(x)
-    ax.set_xticklabels(graphs)
+    ax.set_xticklabels(graph_names)
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.ylabel("Execution time")
     # plt.tight_layout()
-    plt.savefig("test.png", bbox_inches="tight")
+    # plt.savefig("test.png", bbox_inches="tight")
+    if figname is None:
+        plt.show()
+    else:
+        plt.savefig(f"{IMAGES_FOLDER}/{figname}")
+
+def plot_wrt_n(filename, algorithms, figname = None):
+    results = simpleReadResults(filename)
+    graph_names, ns, all_algo_times, all_ses, results = get_ordered_results(filename, algorithms, sort = True)
+
+    fig, ax = plt.subplots(figsize = FIG_SIZE)
+    for algorithm in algorithms:
+        ax.plot(ns, all_algo_times[algorithm], label = algorithm)
+    plt.legend()
+    plt.yscale("log")
+    if figname is None:
+        plt.show()
+    else:
+        plt.savefig(f"{IMAGES_FOLDER}/{figname}")
+
 
 if __name__ == "__main__":
     # nodes, results = readGraph("results.json")
@@ -191,4 +243,8 @@ if __name__ == "__main__":
     plotBarChart("results.json", ["Edge iterator", "Forward algorithm",
                 "Compact Forward algorithm", "Cycle counting", "Sparse + Set Algorithm",
                 "Neighbour pairs - single", "Node iterator",
-                "Sparse adjacency matrix search 1"])
+                "Sparse adjacency matrix search 1"], figname = "names.png")
+    # plot_wrt_n("results.json", ["Edge iterator", "Forward algorithm",
+    #             "Compact Forward algorithm", "Cycle counting", "Sparse + Set Algorithm",
+    #             "Neighbour pairs - single", "Node iterator",
+    #             "Sparse adjacency matrix search 1"])
