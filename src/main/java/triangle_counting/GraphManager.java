@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,22 +15,16 @@ import org.apache.commons.math3.linear.SparseRealMatrix;
 
 public class GraphManager {
     
-    @SuppressWarnings("unchecked")
-    public static ArrayList<Integer>[] readGraph(String fileName, int representationType, boolean isDirected) throws IOException {
-        System.out.println("\n\nReading file: " + fileName);
-        FileReader fileReader = new FileReader(fileName);
+    public static ArrayList<int[]> readGraph(String filename) throws IOException {
+        FileReader fileReader = new FileReader(filename);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line = bufferedReader.readLine();
         
         // get number of vertices - last value in first string
         String[] splited = line.split("\\s+");
-        int nodesCount = Integer.parseInt(splited[splited.length - 1]);
-        System.out.println("Number of nodes: " + nodesCount);
         
         // initialize array of empty ArrayLists
-        ArrayList<Integer>[] graph = new ArrayList[nodesCount];
-        for (int i = 0; i < nodesCount; i++)
-            graph[i] = new ArrayList<Integer>();
+        ArrayList<int[]> edges = new ArrayList<int[]>();
         
         boolean readingEdges = false;
         
@@ -45,21 +40,115 @@ public class GraphManager {
                 // do not allow self-links
                 if (srcNode == dstNode) continue;
                 
-                // do not allow multigraphs, otherwise some algorithm might return inconsistent values
-                // should probably change the type to set so that checking the if element already contained takes O(1)
-                if (!graph[srcNode].contains(dstNode))
-                    graph[srcNode].add(dstNode);
-                
-                if (!isDirected && !graph[dstNode].contains(srcNode))
-                    graph[dstNode].add(srcNode);
+                edges.add(new int[] {srcNode, dstNode});
             }
-            
+
             if (line.contains("*arcs") || line.contains("*edges"))
                 readingEdges = true;
         }
         
         bufferedReader.close();
+        return edges;
+    }
+    
+    public static int getNumberOfNodes(String filename) throws IOException{
+        FileReader fileReader = new FileReader(filename);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String line = bufferedReader.readLine();
+        
+        String[] splited = line.split("\\s+");
+        int nodesCount = Integer.parseInt(splited[splited.length - 1]);
+        bufferedReader.close();
+        return nodesCount;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static ArrayList<Integer>[] getArrayList(String filename, boolean isDirected) throws IOException {
+        
+        ArrayList<int[]> edges = readGraph(filename);
+        int nodesCount = getNumberOfNodes(filename);
+        
+        ArrayList<Integer>[] graph = new ArrayList[nodesCount];
+        for (int i = 0; i < nodesCount; i++)
+            graph[i] = new ArrayList<Integer>();
+        
+        for (int i = 0; i < edges.size(); i++) {
+            int srcNode = edges.get(i)[0];
+            int dstNode = edges.get(i)[1];
+            if (!graph[srcNode].contains(dstNode))
+                graph[srcNode].add(dstNode);
+            
+            if (!isDirected && !graph[dstNode].contains(srcNode))
+                graph[dstNode].add(srcNode);
+            
+            edges.set(i, null);
+        }
+        edges = null;
         return graph;
+    }
+    
+    public static Set<Integer>[] getSet(String filename, boolean isDirected) throws IOException {
+        ArrayList<int[]> edges = readGraph(filename);
+        int nodesCount = getNumberOfNodes(filename);
+        
+        Set<Integer>[] graph = new Set[nodesCount];
+        for (int i = 0; i < nodesCount; i++)
+            graph[i] = new HashSet<Integer>();
+        
+        for (int i = 0; i < edges.size(); i++) {
+            int srcNode = edges.get(i)[0];
+            int dstNode = edges.get(i)[1];
+            graph[srcNode].add(dstNode);
+            
+            if (!isDirected)
+                graph[dstNode].add(srcNode);
+            
+            edges.set(i, null);
+        }
+        edges = null;
+        return graph;
+    }
+    
+    public static int[][] getPrimitiveArray(String filename, boolean isDirected) throws IOException {
+        ArrayList<Integer>[] graphArrayList = getArrayList(filename, isDirected);
+        int[][] graph = new int[graphArrayList.length][];
+        
+        for (int i = 0; i < graphArrayList.length; i++) {
+            ArrayList<Integer> neighbors = graphArrayList[i];
+            graph[i] = new int[neighbors.size()];
+            for (int j = 0; j < neighbors.size(); j++) {
+                graph[i][j] = neighbors.get(j);
+            }
+            graphArrayList[i] = null;
+        }
+        return graph;
+    }
+    
+    public static boolean[][] getAdjacencyMatrix(String filename, boolean isDirected) throws IOException {
+
+        ArrayList<int[]> edges = readGraph(filename);
+        int nodesCount = getNumberOfNodes(filename);
+        
+        boolean[][] graph = new boolean[nodesCount][nodesCount];
+        for (int i = 0; i < edges.size(); i++) {
+            int srcNode = edges.get(i)[0];
+            int dstNode = edges.get(i)[1];
+            graph[srcNode][dstNode] = true;
+            
+            if (!isDirected)
+                graph[dstNode][srcNode] = true;
+            
+            edges.set(i, null);
+        }
+        edges = null;
+        
+        return graph;
+    }
+    
+    public static void sortPrimitiveArray(int[][] graph) {
+        for (int[] array: graph) {
+            Arrays.sort(array);
+        }
     }
     
     public static void writeGraph(ArrayList<Integer>[] graph, String fileName, boolean isDirected) throws IOException {
@@ -83,40 +172,6 @@ public class GraphManager {
         file.close();
     }
     
-    public static Set<Integer>[] toSetRepresentation(ArrayList<Integer>[] graph){
-        Set<Integer>[] setGraph =(Set<Integer>[]) new Set[graph.length];
-        for (int i = 0; i < graph.length; i++)
-            setGraph[i] = new HashSet<>(graph[i]);
-        return setGraph;
-    }
-    
-    public static int[][] toArrayRepresentation(ArrayList<Integer>[] graph, boolean sort){
-        int[][] arrayGraph = new int[graph.length][];
-        for (int node = 0; node < graph.length; node++) {
-            ArrayList<Integer> nodeNeighbors = graph[node];
-            if (sort)
-                Collections.sort(nodeNeighbors);
-            
-            arrayGraph[node] = new int[nodeNeighbors.size()];            
-            for (int destNodeInd = 0; destNodeInd < nodeNeighbors.size(); destNodeInd++) {
-                arrayGraph[node][destNodeInd] = nodeNeighbors.get(destNodeInd);
-            }
-        }
-        return arrayGraph;
-    }
-    
-    public static boolean[][] toAdjacencyMatrix(ArrayList<Integer>[] graph) {
-        boolean[][] adjacencyMatrix = new boolean[graph.length][graph.length];
-        for (int i = 0; i < graph.length; i++) {
-            for(Integer dstNode: graph[i]) {
-                if (dstNode > i) {
-                    adjacencyMatrix[i][dstNode] = true;
-                    adjacencyMatrix[dstNode][i] = true;
-                }
-            }
-        }
-        return adjacencyMatrix;
-    }
 
     public static MySparseMatrix toAdjacencyMySparseMatrix(ArrayList<Integer>[] graph) {
         // make sure the graph is simple
@@ -139,6 +194,8 @@ public class GraphManager {
     }
 
     public static int[][] toEdgeList(ArrayList<Integer>[] graph) {
+        // TO-DO you can just call readGraph and convert ArrayList to array
+        
         // This for loop calculates the number of unique edges in the graph, saved in m
         int m = 0;
         Integer prev;

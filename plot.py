@@ -224,9 +224,11 @@ def plot_wrt_n(filename, algorithms, figname = None):
 
     fig, ax = plt.subplots(figsize = FIG_SIZE)
     for algorithm in algorithms:
+        from scipy.ndimage.filters import gaussian_filter1d
+        ysmoothed = gaussian_filter1d(all_algo_times[algorithm], sigma=2)
         ax.plot(ns, all_algo_times[algorithm], label = algorithm)
     plt.legend()
-    plt.yscale("log")
+    # plt.yscale("log")
     if figname is None:
         plt.show()
     else:
@@ -240,11 +242,12 @@ if __name__ == "__main__":
     # plotTimesByGraph("results.json")
     # algs = readResults("results.json")
     # plotAverageTimes(algs, ["barabasi", "kronecker", "lattice"])
-    plotBarChart("results.json", ["Edge iterator", "Forward algorithm",
-                "Compact Forward algorithm", "Cycle counting", "Sparse + Set Algorithm",
-                "Neighbour pairs - single", "Node iterator",
-                "Sparse adjacency matrix search 1"], figname = "names.png")
-    # plot_wrt_n("results.json", ["Edge iterator", "Forward algorithm",
+
+    # one
+    # plotBarChart("results.json", ["Edge iterator", "Forward algorithm",
     #             "Compact Forward algorithm", "Cycle counting", "Sparse + Set Algorithm",
     #             "Neighbour pairs - single", "Node iterator",
-    #             "Sparse adjacency matrix search 1"])
+    #             "Sparse adjacency matrix search 1"], figname = "names.png")
+    plot_wrt_n("results.json", ["Edge iterator", "Forward algorithm",
+                "Compact Forward algorithm", "Cycle counting", "Node iterator",
+                "Neighbour pairs - single", "Sparse adjacency matrix search 1"], "test_popi.png")

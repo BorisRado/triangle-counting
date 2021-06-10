@@ -12,6 +12,8 @@ public class Executor {
      */
     public static void execute(Callable<Long> algorithm, String algorithmName, String graphName, PrintWriter outputFile) {
         
+        System.out.println("\tExecuting algorithm: " + algorithmName);
+        
         int iterationCount = 32;
         long[] times = new long[iterationCount];
         long[] results = new long[iterationCount];

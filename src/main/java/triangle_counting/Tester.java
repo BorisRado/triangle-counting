@@ -25,12 +25,12 @@ public class Tester {
         for (File file: folder.listFiles()) {
             
             try {
-                ArrayList<Integer>[] graph = GraphManager.readGraph(file.getAbsolutePath(), 1, false);
-                runAllTests(graph, file.getName(), outputFile);
+                ArrayList<Integer>[] graph = GraphManager.getArrayList(file.getAbsolutePath(), false);
+                runAllTests(file.getAbsolutePath(), file.getName(), outputFile);
                 
                 // try to clean the memory
-                graph = null;
                 System.gc();
+                graph = null;
             } catch (IOException e) {
                 e.printStackTrace();            
             }
@@ -40,19 +40,49 @@ public class Tester {
         outputFile.close();
     }
     
-    public static void runAllTests(ArrayList<Integer>[] graph, String graphName, PrintWriter outputFile) {        
-        writeGraphInfo(graph, graphName, outputFile);
+    public static void runAllTests(String absolutePath, String graphName, PrintWriter outputFile) throws IOException {        
+        System.out.println("Working with graph: " + graphName);
 
-        setBasedAlgorithms(GraphManager.toSetRepresentation(graph), graphName, outputFile);
+        // algorithms with ArrayList
+        ArrayList<Integer>[] graph = GraphManager.getArrayList(absolutePath, false);
+        writeGraphInfo(graph, graphName, outputFile);
         adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
-        adjMatrixBasedAlgorithms(GraphManager.toAdjacencyMatrix(graph), graphName, outputFile);
-        sparseAdjMatrixBasedAlgorithms(GraphManager.toAdjacencyMySparseMatrix(graph), graphName, outputFile);
-        primitiveAdjacencyArrayBasedAlgorithms(GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
+        graph = null;
+        System.gc();
+
+        // algorithms with Set
+        Set<Integer>[] graph_set = GraphManager.getSet(absolutePath, false);
+        setBasedAlgorithms(graph_set, graphName, outputFile);
+        graph_set = null;
+        System.gc();
+        
+        // algorithms with int[][]
+        int [][] graph_adj_matrix = GraphManager.getPrimitiveArray(absolutePath, false);
+        primitiveAdjacencyArrayBasedAlgorithms(graph_adj_matrix, graphName, outputFile);
+        graph_adj_matrix = null;
+        System.gc();
+
+        // algorithms with adjacency matrix
+        try {
+            boolean[][] graph_adj = GraphManager.getAdjacencyMatrix(absolutePath, false);
+            adjMatrixBasedAlgorithms(graph_adj, graphName, outputFile);
+            graph_adj = null;
+        } catch (Exception e) {
+            System.out.println("Could not convert the graph to adjacency matrix: " + e.getMessage());
+        } finally {
+            System.gc();            
+        }
+        
+        //MySparseMatrix graph_sparse = GraphManager.toAdjacencyMySparseMatrix(graph);
+        //sparseAdjMatrixBasedAlgorithms(graph_sparse, graphName, outputFile);
+        //graph_sparse = null;
+        //System.gc();
+
         //MiniTriAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toIncidentMySparseMatrix(graph), graphName, outputFile);
-        SparseAndSetAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toSetRepresentation(graph), graphName, outputFile);
-        sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName, outputFile);
-        streamGraphEstimateAlgorithms(GraphManager.toEdgeList(graph), graphName, outputFile);
-        randomWalkAlgorithms(GraphManager.toSetRepresentation(graph), GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
+        //SparseAndSetAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toSetRepresentation(graph), graphName, outputFile);
+        //sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName, outputFile);
+        //streamGraphEstimateAlgorithms(GraphManager.toEdgeList(graph), graphName, outputFile);
+        //randomWalkAlgorithms(GraphManager.toSetRepresentation(graph), GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
         outputFile.println(Utils.printJson("]", 2));
         outputFile.println(Utils.printJson("},", 1));
     }
@@ -66,16 +96,16 @@ public class Tester {
         Executor.execute(() -> TriangleCounter.nodeIterator(graph), "Node iterator", graphName, outputFile);
     }
     
+    public static void adjMatrixBasedAlgorithms(boolean[][] graph, String graphName, PrintWriter outputFile) {
+        Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Adjacency matrix search", graphName, outputFile);        
+    }
+    
     public static void setBasedAlgorithms(Set<Integer>[] graph, String graphName, PrintWriter outputFile) {
         //Executor.execute(() -> TriangleCounter.naiveSearch(graph), "Naive search", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.edgeIterator(graph), "Edge iterator", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.neighborPairsSingle(graph), "Neighbour pairs - single", graphName, outputFile);
     }
     
-    public static void adjMatrixBasedAlgorithms(boolean[][] graph, String graphName, PrintWriter outputFile) {
-        Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Adjacency matrix search", graphName, outputFile);
-    }
-
     public static void sparseAdjMatrixBasedAlgorithms(MySparseMatrix graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Sparse adjacency matrix search 1", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Cycle counting", graphName, outputFile);
