@@ -123,6 +123,73 @@ public class TriangleCounter {
         return new Long(triangleCount);
     }
 
+    public static ArrayList<Integer[]> compactForwardAlgorithmTriangles(ArrayList<Integer>[] graph) {
+        // define injective function eta - takes O(n log(n)) time
+        Set<Pair<Integer, ArrayList<Integer>>> pairs = Utils.getSortedArrays(graph);
+        Map<Integer, Integer> etas = Utils.getEtasMap(pairs);
+
+        // sort adjacency arrays according to eta
+        pairs.forEach(p -> Collections.sort(p.getSecond(), new Comparator<Integer>() {
+            @Override
+            public int compare(Integer first, Integer second) {
+                if (etas.get(first) > etas.get(second))
+                    return 1;
+                else
+                    return -1;
+            }
+        }));
+
+        int triangleCount = 0;
+        ArrayList<Integer[]> triangles = new ArrayList();
+
+
+        // main part, in which we actually count triangles
+        Iterator<Pair<Integer, ArrayList<Integer>>> iterator = pairs.iterator();
+        while (iterator.hasNext()) {
+            Pair<Integer, ArrayList<Integer>> pair = iterator.next();
+            Integer v = pair.getFirst();
+            ArrayList<Integer> v_neighbors = graph[v];
+
+            for (int u : v_neighbors) {
+                if (etas.get(u) > etas.get(v)) {
+                    ArrayList<Integer> u_neighbors = graph[u];
+
+                    Iterator<Integer> uIterator = u_neighbors.iterator(), vIterator = v_neighbors.iterator();
+
+                    if (uIterator.hasNext() && vIterator.hasNext()) {
+                        Integer u_ = uIterator.next(), v_ = vIterator.next();
+                        while (uIterator.hasNext() && vIterator.hasNext() && etas.get(u_) < etas.get(v)
+                                && etas.get(v_) < etas.get(v)) {
+                            if (etas.get(u_) < etas.get(v_))
+                                u_ = uIterator.next();
+                            else if (etas.get(u_) > etas.get(v_))
+                                v_ = vIterator.next();
+                            else {
+                                Integer[] triangle = new Integer[3];
+
+                                triangle[0] = u;
+                                triangle[1] = v;
+                                triangle[2] = u_;
+                                triangles.add(triangle);
+
+
+                                triangleCount++;
+
+                                u_ = uIterator.next();
+                                v_ = vIterator.next();
+
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return triangles;
+    }
+
+
+
     /**
      * Implementation of the theorem 1 presented in the following paper: ```Graphing
      * trillions of triangles``` by Paul Burkhardt, Sep 2016

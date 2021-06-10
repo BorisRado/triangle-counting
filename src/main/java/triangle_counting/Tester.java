@@ -52,6 +52,8 @@ public class Tester {
         sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName, outputFile);
         streamGraphEstimateAlgorithms(GraphManager.toEdgeList(graph), graphName, outputFile);
         randomWalkAlgorithms(GraphManager.toSetRepresentation(graph), GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
+
+
         outputFile.println(Utils.printJson("]", 2));
         outputFile.println(Utils.printJson("},", 1));
     }
@@ -59,6 +61,10 @@ public class Tester {
     public static void adjacencyArrayBasedAlgorithms(ArrayList<Integer>[] graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.forwardAlgorithm(graph), "Forward algorithm", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.compactForwardAlgorithm(graph), "Compact Forward algorithm", graphName, outputFile);
+
+        int[][] edgelist = GraphManager.toEdgeList(graph);
+        Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edgelist, graph.length, 3), "MapReduce Algorithm", graphName, outputFile);
+
     }
     
     public static void setBasedAlgorithms(Set<Integer>[] graph, String graphName, PrintWriter outputFile) {
