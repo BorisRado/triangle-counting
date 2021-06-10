@@ -109,6 +109,10 @@ public class Tester {
     public static void adjacencyArrayBasedAlgorithms(ArrayList<Integer>[] graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.forwardAlgorithm(graph), "Forward algorithm", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.compactForwardAlgorithm(graph), "Compact Forward algorithm", graphName, outputFile);
+
+        int[][] edgelist = GraphManager.toEdgeList(graph);
+        Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edgelist, graph.length, 3), "MapReduce Algorithm", graphName, outputFile);
+
     }
     
     public static void primitiveAdjacencyArrayBasedAlgorithms(int[][] graph, String graphName, PrintWriter outputFile) {
