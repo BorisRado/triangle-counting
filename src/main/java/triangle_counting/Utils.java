@@ -3,11 +3,9 @@ package triangle_counting;
 import org.apache.commons.math3.linear.*;
 import org.apache.commons.math3.random.UnitSphereRandomVectorGenerator;
 
-import javax.print.DocFlavor;
 import org.apache.commons.math3.linear.SparseRealMatrix;
 import org.apache.commons.math3.util.Pair;
 
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,7 +13,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 public class Utils {
 

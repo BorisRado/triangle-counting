@@ -1,8 +1,6 @@
 package triangle_counting;
 
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.SparseRealMatrix;
@@ -10,7 +8,6 @@ import org.apache.commons.math3.util.Pair;
 
 import java.lang.Math;
 
-import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
 public class TriangleCounter {

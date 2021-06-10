@@ -14,7 +14,7 @@ public class Executor {
         
         System.out.println("\tExecuting algorithm: " + algorithmName);
         
-        int iterationCount = 32;
+        int iterationCount = 14;
         long[] times = new long[iterationCount];
         long[] results = new long[iterationCount];
         

@@ -1,7 +1,7 @@
 from randomGraphGenerators import *
 
 folder = "generated_graphs"
-seeds = [i+1 for i in range(5)]
+seeds = [i**3 + 1 for i in range(3)]
 maxp = 5
 
 def generate_all():
@@ -36,10 +36,10 @@ def generate_albert_barabasi():
         print(" Barabasi-Albert")
         for c in [5]:
             print("  Avg degree:", 2*c)
-            for n in range(100, 260_000, 15000):
+            for n in range(100, 300_000, 20000):
                 G = barabasiAlbert(n, c, seed)
                 saveGraph(G, f"barabasi_albert_{n}_{c}_{seed}", folder)
                 G = None
-                
+
 if __name__ == "__main__":
     generate_albert_barabasi()
