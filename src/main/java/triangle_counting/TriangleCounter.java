@@ -343,6 +343,21 @@ public class TriangleCounter {
         return sgtc.estimateTriangles();
     }
 
+    public static Long streamGraphEstimate(ArrayList<int[]> edgeList, int r, int w) {
+        StreamGraphTriangleCounter sgtc = new StreamGraphTriangleCounter(r);
+        int start = 0;
+        int end = w;
+        for (int i = 0; i < edgeList.size() / w; i++) {
+            sgtc.bulkTC(new ArrayList<>(edgeList.subList(start, end)));
+            start += w;
+            end += w;
+        }
+        if (start < edgeList.size()) {
+            sgtc.bulkTC(new ArrayList<>(edgeList.subList(start, edgeList.size())));
+        }
+        return sgtc.estimateTriangles();
+    }
+
     /**
      * https://arxiv.org/pdf/2006.11947.pdf
      * 

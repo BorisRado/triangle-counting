@@ -44,14 +44,14 @@ public class Tester {
         System.out.println("Working with graph: " + graphName);
 
         // algorithms with ArrayList
-        ArrayList<Integer>[] graph = GraphManager.getArrayList(absolutePath, false);
+        ArrayList<Integer>[] graph = GraphManager.getArrayList(absolutePath);
         writeGraphInfo(graph, graphName, outputFile);
         adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
         graph = null;
         System.gc();
 
         // algorithms with Set
-        Set<Integer>[] graph_set = GraphManager.getSet(absolutePath, false);
+        Set<Integer>[] graph_set = GraphManager.getSet(absolutePath);
         setBasedAlgorithms(graph_set, graphName, outputFile);
         graph_set = null;
         System.gc();
@@ -72,17 +72,38 @@ public class Tester {
         } finally {
             System.gc();            
         }
-        
-        //MySparseMatrix graph_sparse = GraphManager.toAdjacencyMySparseMatrix(graph);
-        //sparseAdjMatrixBasedAlgorithms(graph_sparse, graphName, outputFile);
-        //graph_sparse = null;
-        //System.gc();
 
-        //MiniTriAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toIncidentMySparseMatrix(graph), graphName, outputFile);
-        //SparseAndSetAlgorithm(GraphManager.toAdjacencyMySparseMatrix(graph), GraphManager.toSetRepresentation(graph), graphName, outputFile);
-        //sparseRealMatrixBasedAlgorithms(GraphManager.toAdjacencySparseRealMatrix(graph), graphName, outputFile);
-        //streamGraphEstimateAlgorithms(GraphManager.toEdgeList(graph), graphName, outputFile);
-        //randomWalkAlgorithms(GraphManager.toSetRepresentation(graph), GraphManager.toArrayRepresentation(graph, false), graphName, outputFile);
+        // Algorithms with MySparseMatrix
+        MySparseMatrix graph_msm = GraphManager.getAdjacencyMySparseMatrix(absolutePath);
+        sparseAdjMatrixBasedAlgorithms(graph_msm, graphName, outputFile);
+
+        // Algorithms with MySparseMatrix for Adj & Inc
+        MySparseMatrix graph_inc = GraphManager.getIncidentMySparseMatrix(absolutePath);
+        MiniTriAlgorithm(graph_msm, graph_inc, graphName, outputFile);
+        graph_inc = null;
+        System.gc();
+
+        // Algorithms with MySparseMatrix & Set
+        graph_set = GraphManager.getSet(absolutePath);
+        sparseAndSetAlgorithm(graph_msm, graph_set, graphName, outputFile);
+        graph_msm = null;
+        graph_set = null;
+        System.gc();
+
+        // Algorithms with edge list
+        ArrayList<int[]> graph_el = GraphManager.readGraph(absolutePath);
+        streamGraphEstimateAlgorithms(graph_el, graphName, outputFile);
+        graph_el = null;
+        System.gc();
+
+        // Algorithms with adj list (array) & set
+        graph_adj_matrix = GraphManager.getPrimitiveArray(absolutePath, false);
+        graph_set = GraphManager.getSet(absolutePath);
+        randomWalkAlgorithms(graph_set, graph_adj_matrix, graphName, outputFile);
+        graph_adj_matrix = null;
+        graph_set = null;
+        System.gc();
+
         outputFile.println(Utils.printJson("]", 2));
         outputFile.println(Utils.printJson("},", 1));
     }
@@ -115,7 +136,7 @@ public class Tester {
         Executor.execute(() -> TriangleCounter.MiniTri(adjMatrix, incMatrix), "Mini Tri Algorithm", graphName, outputFile);
     }
 
-    public static void SparseAndSetAlgorithm(MySparseMatrix graphAdj, Set<Integer>[] graphSet, String graphName, PrintWriter outputFile) {
+    public static void sparseAndSetAlgorithm(MySparseMatrix graphAdj, Set<Integer>[] graphSet, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.MiniTri(graphAdj, graphSet), "Sparse + Set Algorithm", graphName, outputFile);
     }
     
@@ -127,6 +148,11 @@ public class Tester {
 
     public static void streamGraphEstimateAlgorithms(int[][] edgeList, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.streamGraphEstimate(edgeList, edgeList.length > 20 ? edgeList.length / 20 : 1, edgeList.length > 10 ? edgeList.length / 10 : edgeList.length),
+                "Stream Graph Estimate", graphName, outputFile);
+    }
+
+    public static void streamGraphEstimateAlgorithms(ArrayList<int[]> edgeList, String graphName, PrintWriter outputFile) {
+        Executor.execute(() -> TriangleCounter.streamGraphEstimate(edgeList, edgeList.size() > 20 ? edgeList.size() / 20 : 1, edgeList.size() > 10 ? edgeList.size() / 10 : edgeList.size()),
                 "Stream Graph Estimate", graphName, outputFile);
     }
 
