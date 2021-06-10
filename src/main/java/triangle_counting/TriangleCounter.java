@@ -244,6 +244,26 @@ public class TriangleCounter {
         }
         return new Long(triangleCount);
     }
+    
+    public static Long nodeIterator(int[][] graph) {
+        // sort edge lists for all nodes
+        for (int i = 0; i < graph.length; i++)
+            Arrays.parallelSort(graph[i]);
+        
+        long traingleCount = 0L;
+        for (int n = 0; n < graph.length; n++) {
+            for (int a: graph[n]) {
+                if (a >= n)
+                    continue;
+                for (int b: graph[n]) {
+                    if (b > n && Arrays.binarySearch(graph[a], b) > 0)
+                        traingleCount++;
+                }
+            }
+        }
+        
+        return new Long(traingleCount);
+    }
 
     /**
      * `CS167: Reading in Algorithms Counting Triangles` by Tim Roughgarden. Using 2
@@ -386,6 +406,21 @@ public class TriangleCounter {
         }
         if (start < edgeList.length) {
             sgtc.bulkTC(Arrays.copyOfRange(edgeList, start, edgeList.length));
+        }
+        return sgtc.estimateTriangles();
+    }
+
+    public static Long streamGraphEstimate(ArrayList<int[]> edgeList, int r, int w) {
+        StreamGraphTriangleCounter sgtc = new StreamGraphTriangleCounter(r);
+        int start = 0;
+        int end = w;
+        for (int i = 0; i < edgeList.size() / w; i++) {
+            sgtc.bulkTC(new ArrayList<>(edgeList.subList(start, end)));
+            start += w;
+            end += w;
+        }
+        if (start < edgeList.size()) {
+            sgtc.bulkTC(new ArrayList<>(edgeList.subList(start, edgeList.size())));
         }
         return sgtc.estimateTriangles();
     }

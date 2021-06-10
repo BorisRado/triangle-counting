@@ -83,12 +83,86 @@ public class StreamGraphTriangleCounter {
         m += B.length;
     }
 
+    /**
+     * https://www.vldb.org/pvldb/vol6/p1870-aduri.pdf
+     * @param B stream of edges
+     */
+    public void bulkTC(ArrayList<int[]> B) {
+        int randInt, idx;
+        L = new HashMap<>(); // Part of Step 2
+
+        // Step 1
+        for (Estimator est: estimators) {
+            est.batchReset();
+            randInt = random.nextInt(m + B.size());
+            if (randInt >= m) {
+                idx = randInt - m;
+                est.setLevelOneEdge(B.get(idx));
+
+                // Part of Step 2
+                L.computeIfAbsent(idx, k -> new ArrayList<>());
+                L.get(idx).add(est);
+            }
+        }
+
+        // Step 2
+        P = new HashMap<>();
+        HashMap<Integer, Integer> deg = edgeIterA(B);
+
+        for (Estimator est: estimators) {
+            randEdgeIntoEvent(est, deg);
+        }
+
+        edgeIterB(B);
+
+        // Step 3
+        // Construct Q
+        ArrayList<Integer> e;
+        Q = new HashMap<>();
+        ArrayList<Estimator> Qi;
+        for (Estimator est: estimators) {
+            e = est.getMissingEdge();
+            Q.computeIfAbsent(e, k -> new ArrayList<>());
+            Q.get(e).add(est);
+        }
+
+        // Find triangles
+        for (int i = 0; i < B.size(); i++) {
+            Qi = Q.get(Utils.arrayToList(B.get(i)));
+            if (Qi != null) {
+                for (Estimator est: Qi) {
+                    if (i > est.r2pos) {
+                        est.t = B.get(i);
+                    }
+                }
+            }
+        }
+
+        // Update number of observed edges
+        m += B.size();
+    }
+
     private HashMap<Integer, Integer> edgeIterA(int[][] B) {
         HashMap<Integer, Integer> deg = new HashMap<>();
         int x, y, degx, degy;
         for (int i = 0; i < B.length; i++) {
             x = B[i][0];
             y = B[i][1];
+            degx = deg.getOrDefault(x, 0);
+            degy = deg.getOrDefault(y, 0);
+            deg.put(x, ++degx);
+            deg.put(y, ++degy);
+            eventA(i, x, y, deg);
+        }
+        return deg;
+    }
+
+    private HashMap<Integer, Integer> edgeIterA(ArrayList<int[]> B) {
+        HashMap<Integer, Integer> deg = new HashMap<>();
+        int x, y, degx, degy;
+        for (int i = 0; i < B.size(); i++) {
+            x = B.get(i)[0];
+            y = B.get(i)[1];
             degx = deg.getOrDefault(x, 0);
             degy = deg.getOrDefault(y, 0);
             deg.put(x, ++degx);
@@ -110,6 +184,21 @@ public class StreamGraphTriangleCounter {
             deg.put(y, ++degy);
             eventB(i, B[i], x, degx);
             eventB(i, B[i], y, degy);
+        }
+    }
+
+    private void edgeIterB(ArrayList<int[]> B) {
+        HashMap<Integer, Integer> deg = new HashMap<>();
+        int x, y, degx, degy;
+        for (int i = 0; i < B.size(); i++) {
+            x = B.get(i)[0];
+            y = B.get(i)[1];
+            degx = deg.getOrDefault(x, 0);
+            degy = deg.getOrDefault(y, 0);
+            deg.put(x, ++degx);
+            deg.put(y, ++degy);
+            eventB(i, B.get(i), x, degx);
+            eventB(i, B.get(i), y, degy);
         }
     }
 

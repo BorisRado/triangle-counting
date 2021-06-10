@@ -101,6 +101,12 @@ public class Utils {
         out += "\"" + key + "\"" + ": " + value + ",";
         return out;
     }
+    
+    public static String printJson(String key, double value, int offset) {
+        String out = getOffset(offset);
+        out += "\"" + key + "\"" + ": " + value + ",";
+        return out;
+    }
 
     public static String printJson(String symbol, int offset) {
         String out = getOffset(offset);
@@ -146,6 +152,25 @@ public class Utils {
             idx++;
         }
         return etas;
+    }
+    
+    public static double computeStandardDeviation(long[] values) {
+        
+        double mean = computeMean(values);
+                
+        double sd = 0;
+        for (long val: values)
+            sd += Math.pow(val - mean, 2);
+        sd = Math.sqrt(sd / values.length);
+        return Math.round(sd);
+    }
+    
+    public static double computeMean(long[] values) {
+        double mean = 0;
+        for (long val: values)
+            mean += val;
+        mean /= values.length;
+        return mean;
     }
 
 }
