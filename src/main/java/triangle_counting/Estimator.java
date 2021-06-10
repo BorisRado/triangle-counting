@@ -88,9 +88,9 @@ public class Estimator {
         output[10] = ",";
         output[11] = String.valueOf(t == null ? -1 : t[1]);
         output[12] = ")";
-        for (int i = 0; i < output.length; i++) {
-            System.out.print(output[i]);
-        }
-        System.out.println();
+        //for (int i = 0; i < output.length; i++) {
+        //    System.out.print(output[i]);
+        //}
+        //System.out.println();
     }
 }

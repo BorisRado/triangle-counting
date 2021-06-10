@@ -2,6 +2,7 @@ package triangle_counting;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -124,5 +125,34 @@ public class GraphManager {
             }
         }
         return adjMatrix;
+    }
+    
+    public static int[][] toEdgeList(ArrayList<Integer>[] graph) {
+        // This for loop calculates the number of unique edges in the graph, saved in m
+        int m = 0;
+        Integer prev;
+        for (int i = 0; i < graph.length; i++) {
+            prev = i;
+            Collections.sort(graph[i]);
+            for (Integer j: graph[i]) {
+                if (j > prev) {
+                    m++;
+                    prev = j;
+                }
+            }
+        }
+        int[][] edgeList = new int[m][2];
+        int counter = 0;
+        for (int startnode = 0; startnode < graph.length; startnode++) {
+            prev = startnode;
+            for (Integer endnode: graph[startnode]) {
+                if (endnode > prev) {
+                    edgeList[counter][0] = startnode;
+                    edgeList[counter++][1] = endnode;
+                    prev = endnode;
+                }
+            }
+        }
+        return edgeList;
     }
 }

@@ -8,7 +8,7 @@ import org.apache.commons.math3.util.Pair;
 
 import java.lang.Math;
 
-import static java.lang.Math.round;
+    import static java.lang.Math.round;
 
 public class TriangleCounter {
 
