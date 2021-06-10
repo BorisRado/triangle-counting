@@ -50,6 +50,70 @@ public class GraphManager {
         bufferedReader.close();
         return edges;
     }
+
+    public static ArrayList<Integer>[] getArrayList(String filename) throws IOException {
+        FileReader fileReader = new FileReader(filename);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String line = bufferedReader.readLine();
+
+        // Get number of nodes
+        int n = Integer.parseInt(line.split("\\s+")[1]);
+
+        // Init arraylist
+        ArrayList<Integer>[] graph = new ArrayList[n];
+
+        // Init nodes
+        for (int i = 0; i < n; i++) {
+            bufferedReader.readLine();
+            graph[i] = new ArrayList<>();
+        }
+
+        // Add edges
+        line = bufferedReader.readLine();
+        int m = Integer.parseInt(line.split("\\s+")[1]);
+        for (int i = 0; i < m; i++) {
+            line = bufferedReader.readLine();
+            String[] edgeNodes = line.split("\\s+");
+            Integer srcNode = Integer.parseInt(edgeNodes[0]) - 1;
+            Integer dstNode = Integer.parseInt(edgeNodes[1]) - 1;
+            graph[srcNode].add(dstNode);
+            graph[dstNode].add(srcNode);
+        }
+
+        return graph;
+    }
+
+    public static Set<Integer>[] getSet(String filename) throws IOException {
+        FileReader fileReader = new FileReader(filename);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String line = bufferedReader.readLine();
+
+        // Get number of nodes
+        int n = Integer.parseInt(line.split("\\s+")[1]);
+
+        // Init arraylist
+        Set<Integer>[] graph = new Set[n];
+
+        // Init nodes
+        for (int i = 0; i < n; i++) {
+            bufferedReader.readLine();
+            graph[i] = new HashSet<>();
+        }
+
+        // Add edges
+        line = bufferedReader.readLine();
+        int m = Integer.parseInt(line.split("\\s+")[1]);
+        for (int i = 0; i < m; i++) {
+            line = bufferedReader.readLine();
+            String[] edgeNodes = line.split("\\s+");
+            Integer srcNode = Integer.parseInt(edgeNodes[0]) - 1;
+            Integer dstNode = Integer.parseInt(edgeNodes[1]) - 1;
+            graph[srcNode].add(dstNode);
+            graph[dstNode].add(srcNode);
+        }
+
+        return graph;
+    }
     
     public static int getNumberOfNodes(String filename) throws IOException{
         FileReader fileReader = new FileReader(filename);
@@ -143,6 +207,14 @@ public class GraphManager {
         edges = null;
         
         return graph;
+    }
+
+    public static MySparseMatrix getAdjacencyMySparseMatrix(String filename) throws IOException {
+        return new MySparseMatrix(getArrayList(filename));
+    }
+
+    public static MySparseMatrix getIncidentMySparseMatrix(String filename) throws IOException {
+        return new MySparseMatrix(getArrayList(filename), true);
     }
     
     public static void sortPrimitiveArray(int[][] graph) {

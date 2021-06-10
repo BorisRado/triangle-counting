@@ -5,12 +5,10 @@ import java.util.Collections;
 import java.util.Set;
 
 public class MySparseMatrix {
-    long[] values;
     int[] columns;
     int[] rows;
 
     public MySparseMatrix(boolean[][] matrix, int m) {
-        values = new long[m];
         columns = new int[m];
         rows = new int[matrix.length+1];
         rows[matrix.length] = m;
@@ -20,7 +18,6 @@ public class MySparseMatrix {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix.length; j++) {
                 if (matrix[i][j]) {
-                    values[counter] = 1;
                     columns[counter] = j;
                     counter++;
                 }
@@ -43,7 +40,6 @@ public class MySparseMatrix {
         for (ArrayList<Integer> adj: graph) {
             m += adj.size();
         }
-        values = new long[m];
         columns = new int[m];
         rows = new int[graph.length + 1];
         rows[0] = 0;
@@ -54,11 +50,9 @@ public class MySparseMatrix {
             adj = graph[i];
             if (adj.size() > 0) {
                 Collections.sort(adj);
-                values[counter] = 1;
                 columns[counter++] = adj.get(0);
                 for (int j = 1; j < adj.size(); j++) {
                     if (adj.get(j-1) < adj.get(j)) {
-                        values[counter] = 1;
                         columns[counter++] = adj.get(j);
                     }
                 }
@@ -79,7 +73,6 @@ public class MySparseMatrix {
             for (ArrayList<Integer> adj: graph) {
                 m += adj.size();
             }
-            values = new long[m];
             columns = new int[m];
             rows = new int[m/2 + 1];
             rows[0] = 0;
@@ -89,8 +82,6 @@ public class MySparseMatrix {
             for (int i = 0; i < graph.length; i++) {
                 for (Integer j: graph[i]) {
                     if (j>i) {
-                        values[counter] = 1;
-                        values[counter+1] = 1;
                         columns[counter++] = i;
                         columns[counter++] = j;
                         rows[counter/2] = counter;
@@ -254,11 +245,6 @@ public class MySparseMatrix {
     }
 
     public void myPrint() {
-        System.out.print("Values (" + values.length + "): ");
-        for (int i = 0; i < values.length; i++) {
-            System.out.print(values[i] + " ");
-        }
-        System.out.println();
         System.out.print("Columns (" + columns.length + "): ");
         for (int i = 0; i < columns.length; i++) {
             System.out.print(columns[i] + " ");
