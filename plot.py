@@ -221,14 +221,26 @@ def plotBarChart(filename, algorithms, figname = None):
 def plot_wrt_n(filename, algorithms, figname = None):
     results = simpleReadResults(filename)
     graph_names, ns, all_algo_times, all_ses, results = get_ordered_results(filename, algorithms, sort = True)
+    print(ns)
+    print(all_algo_times["Edge iterator"])
+
+
+    unique_n = np.unique(ns)
+    new_n, new_algo_times = np.empty((unique_n.shape[0])), {algo: np.empty((unique_n.shape[0])) for algo in algorithms}
+    new_sds = {algo: np.empty((unique_n.shape[0])) for algo in algorithms}
+    for i, n in enumerate(np.unique(ns)):
+        new_n[i] = n
+        for algo in new_algo_times:
+            new_algo_times[algo][i] = np.mean(all_algo_times[algo][ns == n])
+            new_sds[algo][i] = np.std(all_algo_times[algo][ns == n])
+    ns = new_n
+    all_algo_times = new_algo_times
+    print(all_algo_times["Edge iterator"])
 
     fig, ax = plt.subplots(figsize = FIG_SIZE)
     for algorithm in algorithms:
-        from scipy.ndimage.filters import gaussian_filter1d
-        ysmoothed = gaussian_filter1d(all_algo_times[algorithm], sigma=2)
-        ax.plot(ns, all_algo_times[algorithm], label = algorithm)
+        ax.errorbar(ns, all_algo_times[algorithm], label = algorithm)#, yerr = new_sds[algorithm])
     plt.legend()
-    # plt.yscale("log")
     if figname is None:
         plt.show()
     else:
@@ -250,4 +262,4 @@ if __name__ == "__main__":
     #             "Sparse adjacency matrix search 1"], figname = "names.png")
     plot_wrt_n("results.json", ["Edge iterator", "Forward algorithm",
                 "Compact Forward algorithm", "Cycle counting", "Node iterator",
-                "Neighbour pairs - single", "Sparse adjacency matrix search 1"], "test_popi.png")
+                "Neighbour pairs - single", "Sparse adjacency matrix search 1"])

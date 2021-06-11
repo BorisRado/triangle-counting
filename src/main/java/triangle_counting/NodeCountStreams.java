@@ -114,7 +114,6 @@ public class NodeCountStreams {
         Double triangles = graphs.parallelStream().map(x -> calcTriangles(x, nodeCount, par)).reduce(0.0, Double::sum, Double::sum);
 
         long tris = Math.round(triangles);
-        System.out.println(tris);
 
         return tris;
     }
