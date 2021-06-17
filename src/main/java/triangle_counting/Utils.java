@@ -16,7 +16,7 @@ import java.util.TreeSet;
 
 public class Utils {
 
-    public static double[] lanczosMethod(SparseRealMatrix A, int m) {
+    public static double[] lanczosMethod(MySparseMatrix A, int m) {
         // RealMatrix T;
         double[][] T = getTridiagonalMatrix(A, m);
         EigenDecomposition ed = new EigenDecomposition(T[0], T[1]);
@@ -24,11 +24,11 @@ public class Utils {
         return ed.getRealEigenvalues();
     }
 
-    public static double[][] getTridiagonalMatrix(SparseRealMatrix t, int m) {
+    public static double[][] getTridiagonalMatrix(MySparseMatrix t, int m) {
         double[] alpha = new double[m + 1];
         double[] betta = new double[m + 1];
 
-        int n = t.getColumnDimension();
+        int n = t.n;
 
         UnitSphereRandomVectorGenerator uvg = new UnitSphereRandomVectorGenerator(n);
 
@@ -36,10 +36,15 @@ public class Utils {
         RealVector v1 = new ArrayRealVector(uvg.nextVector());
 
         RealVector w, wx;
+        double[] vector, wxVector;
 
         //RealMatrix t = new Array2DRowRealMatrix(a);
         for (int i = 1; i < m; i++) {
-            wx = t.operate(v1);
+
+            vector = v1.toArray();
+            wxVector = t.multiplyVector(vector);
+            wx = new ArrayRealVector(wxVector);
+
             alpha[i] = wx.dotProduct(v1);
             w = wx.subtract(v1.mapMultiply(alpha[i])).subtract(v0.mapMultiply(betta[i]));
             betta[i + 1] = w.getNorm();

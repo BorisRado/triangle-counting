@@ -102,8 +102,8 @@ public class NodeCountStreams {
         return sum;
     }
 
-    public static Long mapReduceAlgorithm(int[][] edgeList, int nodeCount, int par){
-        Map<String, List<FirstMap>> collected = Arrays.stream(edgeList).parallel().
+    public static Long mapReduceAlgorithm(ArrayList<int[]>  edgeList, int nodeCount, int par){
+        Map<String, List<FirstMap>> collected = edgeList.stream().parallel().
                 flatMap(x -> toPartitions(x, nodeCount, par).stream()).
                 collect(Collectors.groupingBy(FirstMap::getRepr));
 
