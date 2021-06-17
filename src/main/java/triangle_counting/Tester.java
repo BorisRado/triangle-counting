@@ -45,16 +45,16 @@ public class Tester {
 
         ArrayList<Integer>[] graph = GraphManager.getArrayList(absolutePath, false);
         writeGraphInfo(graph, graphName, outputFile);
-        adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
+        //adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
         graph = null;
         System.gc();
 
         MySparseMatrix graph_msm = GraphManager.getAdjacencyMySparseMatrix(absolutePath);
-        sparseAdjMatrixBasedAlgorithms(graph_msm, graphName, outputFile);
+        //sparseAdjMatrixBasedAlgorithms(graph_msm, graphName, outputFile);
 
         // algorithms with Set
         Set<Integer>[] graph_set = GraphManager.getSet(absolutePath, false);
-        setBasedAlgorithms(graph_set, graphName, outputFile);
+        //setBasedAlgorithms(graph_set, graphName, outputFile);
         graph_set = null;
         System.gc();
         
@@ -76,7 +76,7 @@ public class Tester {
         //}
 
         // Algorithms with MySparseMatrix
-        MySparseMatrix graph_msm = GraphManager.getAdjacencyMySparseMatrix(absolutePath);
+        graph_msm = GraphManager.getAdjacencyMySparseMatrix(absolutePath);
         sparseAdjMatrixBasedAlgorithms(graph_msm, graphName, outputFile);
 
         // Algorithms with MySparseMatrix for Adj & Inc
@@ -95,9 +95,6 @@ public class Tester {
         // Algorithms with edge list
         ArrayList<int[]> graph_el = GraphManager.getEdgeList(absolutePath);
         streamGraphEstimateAlgorithms(graph_el, graphName, outputFile, graph.length);
-
-        SparseRealMatrix adjMatrix = new OpenMapRealMatrix(50000, 50000);
-        DMatrixSparseTriplet dgraph = new DMatrixSparseTriplet(100000, 100000, graph_el.size());
 
         graph_el = null;
         System.gc();
@@ -138,7 +135,8 @@ public class Tester {
         Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Sparse adjacency matrix search 1", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Cycle counting", graphName, outputFile);
 
-        Executor.execute(() -> TriangleCounter.eigenTriangle(graph), "Eigen estimation matrix", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.eigenTriangle(graph, true), "Eigen estimation matrix", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.eigenTriangle(graph, false), "Eigen estimation matrix Smile", graphName, outputFile);
 
     }
 
