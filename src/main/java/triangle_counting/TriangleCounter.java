@@ -5,7 +5,9 @@ import java.util.*;
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.SparseRealMatrix;
 import org.apache.commons.math3.util.Pair;
-
+import smile.math.matrix.EVD;
+import smile.math.matrix.SparseMatrix;
+import smile.math.matrix.Lanczos;
 import java.lang.Math;
 
     import static java.lang.Math.round;
@@ -365,18 +367,37 @@ public class TriangleCounter {
      * @param adjMatrix SparseRealMatrix representation of adjacency matrix.
      * @return estimated number of triangles in the network
      */
-    public static Long eigenTriangle(SparseRealMatrix adjMatrix) {
+    public static Long eigenTriangle(MySparseMatrix adjMatrix) {
         // See https://www.math.cmu.edu/~ctsourak/tsourICDM08.pdf
         // Different as in their metod where lanczos method is calculated
         // somehow on every iteration. In paper they stated
         // 30 top eigenvalues are more than enough for estimation
 
         double[] eigenvalues;
+
+        // our implementation
         eigenvalues = Utils.lanczosMethod(adjMatrix, 30);
+
+        double[] elements = new double[adjMatrix.columns.length];
+        Arrays.fill(elements, 1.0);
+
+        //SparseMatrix g = new SparseMatrix(adjMatrix.n , adjMatrix.n , elements, adjMatrix.columns, adjMatrix.rows);
+        //g.setSymmetric(true);
+        //EVD eigenvaluesEVD = Lanczos.eigen(g, 30);
+        //eigenvalues = eigenvaluesEVD.getEigenValues();
+
+
+        double tol = 0.05;
         double triangleCount = 0;
         for (double v: eigenvalues) {
-            triangleCount += Math.pow(v, 3);
+            double eigen = Math.pow(v, 3);
+            triangleCount += eigen;
+
+            if (eigen/triangleCount < tol){
+                break;
+            }
         }
+
         long result = round(triangleCount) / 6;
 
         return result;

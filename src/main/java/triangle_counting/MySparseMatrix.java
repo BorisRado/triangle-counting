@@ -7,12 +7,14 @@ import java.util.Set;
 public class MySparseMatrix {
     int[] columns;
     int[] rows;
+    int n;
 
     public MySparseMatrix(boolean[][] matrix, int m) {
         columns = new int[m];
         rows = new int[matrix.length+1];
         rows[matrix.length] = m;
         rows[0] = 0;
+        n = matrix.length;
 
         int counter = 0;
         for (int i = 0; i < matrix.length; i++) {
@@ -43,6 +45,8 @@ public class MySparseMatrix {
         columns = new int[m];
         rows = new int[graph.length + 1];
         rows[0] = 0;
+        n = graph.length;
+
 
         ArrayList<Integer> adj;
         int counter = 0;
@@ -76,6 +80,7 @@ public class MySparseMatrix {
             columns = new int[m];
             rows = new int[m/2 + 1];
             rows[0] = 0;
+            n = graph.length;
 
             //ArrayList<Integer> adj;
             int counter = 0;
@@ -228,6 +233,25 @@ public class MySparseMatrix {
             }
         }
         return prod;
+    }
+
+    public double[] multiplyVector(double[] vector) {
+        double[] product = new double[vector.length];
+        int start;
+        int end;
+        double sum = 0.0;
+
+        for (int i = 0; i < vector.length; i++) {
+            start = rows[i];
+            end = rows[i+1];
+            for (int k = start; k < end; k++) {
+                sum += vector[columns[k]];
+            }
+            product[i] = sum;
+            sum = 0.0;
+
+        }
+        return product;
     }
 
     public long hadamardWithSum(long[][] matrix) {
