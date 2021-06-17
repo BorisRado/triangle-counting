@@ -44,7 +44,7 @@ public class Tester {
         ArrayList<Integer>[] graph = GraphManager.getArrayList(absolutePath, false);
         int nodesCount = graph.length;
         writeGraphInfo(graph, graphName, outputFile);
-        //adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
+        adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
         graph = null;
         System.gc();
 
@@ -111,6 +111,7 @@ public class Tester {
     
     public static void adjacencyArrayBasedAlgorithms(ArrayList<Integer>[] graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.forwardAlgorithm(graph), "Forward algorithm", graphName, outputFile);
+        System.gc();
         Executor.execute(() -> TriangleCounter.compactForwardAlgorithm(graph), "Compact Forward algorithm", graphName, outputFile);
     }
     
@@ -133,7 +134,7 @@ public class Tester {
         Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Cycle counting", graphName, outputFile);
 
         Executor.execute(() -> TriangleCounter.eigenTriangle(graph, true), "Eigen estimation matrix", graphName, outputFile);
-        Executor.execute(() -> TriangleCounter.eigenTriangle(graph, false), "Eigen estimation matrix Smile", graphName, outputFile);
+        // Executor.execute(() -> TriangleCounter.eigenTriangle(graph, false), "Eigen estimation matrix Smile", graphName, outputFile);
 
     }
 
@@ -156,7 +157,7 @@ public class Tester {
                 edgeList.size() / 20 : 1, edgeList.size() > 10 ? edgeList.size() / 10 : edgeList.size()),
                 "Stream Graph Estimate", graphName, outputFile);
 
-        Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edgeList, nodeCount, 3), "MapReduce Algorithm", graphName, outputFile);
+        // Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edgeList, nodeCount, 3), "MapReduce Algorithm", graphName, outputFile);
 
     }
 
