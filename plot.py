@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 
+print(plt.style.available)
 plt.style.use("ggplot")
 
 """
@@ -211,8 +212,8 @@ def plotBarChart(filename, algorithms, figname = None):
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.ylabel("Execution time")
+    plt.yscale("log")
     # plt.tight_layout()
-    # plt.savefig("test.png", bbox_inches="tight")
     if figname is None:
         plt.show()
     else:
@@ -256,10 +257,10 @@ if __name__ == "__main__":
     # plotAverageTimes(algs, ["barabasi", "kronecker", "lattice"])
 
     # one
-    # plotBarChart("results.json", ["Edge iterator", "Forward algorithm",
-    #             "Compact Forward algorithm", "Cycle counting", "Sparse + Set Algorithm",
-    #             "Neighbour pairs - single", "Node iterator",
-    #             "Sparse adjacency matrix search 1"], figname = "names.png")
-    plot_wrt_n("results.json", ["Edge iterator", "Forward algorithm",
-                "Compact Forward algorithm", "Cycle counting", "Node iterator",
-                "Neighbour pairs - single", "Sparse adjacency matrix search 1"])
+    plotBarChart("results.json", ["Edge iterator", "Forward algorithm",
+                "Compact Forward algorithm", "Cycle counting",
+                "Neighbour pairs - single", "Node iterator",
+                "Sparse adjacency matrix search 1"], "kao_final.png")
+    # plot_wrt_n("results.json", ["Edge iterator",
+    #             "Compact Forward algorithm", "Cycle counting", "Node iterator",
+    #             "Neighbour pairs - single", "Sparse adjacency matrix search 1"])
