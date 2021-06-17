@@ -376,19 +376,15 @@ public class TriangleCounter {
         double[] eigenvalues;
 
         // our implementation
-        //eigenvalues = Utils.lanczosMethod(adjMatrix, 30);
+        eigenvalues = Utils.lanczosMethod(adjMatrix, 30);
 
         double[] elements = new double[adjMatrix.columns.length];
         Arrays.fill(elements, 1.0);
 
-        SparseMatrix g = new SparseMatrix(adjMatrix.n , adjMatrix.n , elements, adjMatrix.columns, adjMatrix.rows);
-        g.setSymmetric(true);
-
-
-
-
-        EVD eigenvaluesEVD = Lanczos.eigen(g, 30);
-        eigenvalues = eigenvaluesEVD.getEigenValues();
+        //SparseMatrix g = new SparseMatrix(adjMatrix.n , adjMatrix.n , elements, adjMatrix.columns, adjMatrix.rows);
+        //g.setSymmetric(true);
+        //EVD eigenvaluesEVD = Lanczos.eigen(g, 30);
+        //eigenvalues = eigenvaluesEVD.getEigenValues();
 
 
         double tol = 0.05;
