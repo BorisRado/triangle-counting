@@ -1,10 +1,14 @@
 package triangle_counting;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.math3.linear.OpenMapRealMatrix;
 import org.apache.commons.math3.linear.SparseRealMatrix;
@@ -20,6 +24,32 @@ public class GraphManager {
             graph.add(edge);
         graphReader.close();
         return graph;
+    }
+    
+    public static int[][] getEdgeListInt(String filename) throws IOException {
+        FileReader fileReader = new FileReader(filename);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String line = bufferedReader.readLine();
+        
+        while (!line.contains("*edges") && !line.contains("*arcs"))
+            line = bufferedReader.readLine();
+        
+        // get number of edges
+        int edgesCount = Integer.parseInt(line.split(" ")[1]);
+        int [][] edges = new int[edgesCount][];
+        
+        // edges into array
+        for (int i = 0; i < edgesCount; i++) {
+            line = bufferedReader.readLine();
+            String[] edgeNodes = line.split("\\s+");
+            int srcNode = Integer.parseInt(edgeNodes[0]) - 1;
+            int dstNode = Integer.parseInt(edgeNodes[1]) - 1;
+            edges[i] = new int[]{srcNode, dstNode};
+        }
+        
+        bufferedReader.close();
+        return edges;
+        
     }
     
     public static ArrayList<Integer>[] getArrayList(String filename, boolean isDirected) throws IOException {
@@ -43,6 +73,11 @@ public class GraphManager {
                 graph[dstNode].add(srcNode);
         }
         graphReader.close();
+        
+        // randomize the order in arraylists so not to give an advantage to algorithms that require the lists to be sorted
+        for (int i = 0; i < graph.length; i++)
+            Collections.shuffle(graph[i]);
+        
         return graph;
     }
     
@@ -78,6 +113,20 @@ public class GraphManager {
             }
             graphArrayList[i] = null;
         }
+        
+        // randomize the order in arraylists so not to give an advantage to algorithms that require the lists to be sorted
+        // randomize using the Fisher-Yates shuffle
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = 0; i < graph.length; i++) {
+            int[] array = graph[i];
+            for (int j = array.length - 1; j > 0 ; j--) {
+                int rndIndex = rnd.nextInt(j + 1);
+                int tmp = array[rndIndex];
+                array[rndIndex] = array[j];
+                array[j] = tmp;
+            }
+        }
+        
         return graph;
     }
     

@@ -38,11 +38,12 @@ public class Tester {
         outputFile.close();
     }
     
-    public static void runAllTests(String absolutePath, String graphName, PrintWriter outputFile) throws IOException {        
+    public static void runAllTests(String absolutePath, String graphName, PrintWriter outputFile) throws Exception {        
         System.out.println("Working with graph: " + graphName);
 
         // algorithms with ArrayList
         ArrayList<Integer>[] graph = GraphManager.getArrayList(absolutePath, false);
+        int nodesCount = graph.length;
         writeGraphInfo(graph, graphName, outputFile);
         adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
         graph = null;
@@ -74,6 +75,7 @@ public class Tester {
         // Algorithms with MySparseMatrix
         MySparseMatrix graph_msm = GraphManager.getAdjacencyMySparseMatrix(absolutePath);
         sparseAdjMatrixBasedAlgorithms(graph_msm, graphName, outputFile);
+        System.gc();
 
         // Algorithms with MySparseMatrix for Adj & Inc
         MySparseMatrix graph_inc = GraphManager.getIncidentMySparseMatrix(absolutePath);
@@ -101,6 +103,12 @@ public class Tester {
         graph_adj_matrix = null;
         graph_set = null;
         System.gc();
+        
+        
+        int[][] edges = GraphManager.getEdgeListInt(absolutePath);
+        edgeListBasedAlgorithms(edges, nodesCount, graphName, outputFile);
+        edges = null;
+        System.gc();
 
         outputFile.println(Utils.printJson("]", 2));
         outputFile.println(Utils.printJson("},", 1));
@@ -109,10 +117,10 @@ public class Tester {
     public static void adjacencyArrayBasedAlgorithms(ArrayList<Integer>[] graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.forwardAlgorithm(graph), "Forward algorithm", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.compactForwardAlgorithm(graph), "Compact Forward algorithm", graphName, outputFile);
-
-        int[][] edgelist = GraphManager.toEdgeList(graph);
-        Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edgelist, graph.length, 3), "MapReduce Algorithm", graphName, outputFile);
-
+    }
+    
+    public static void edgeListBasedAlgorithms(int[][] edges, int nodesCount, String graphName, PrintWriter outputFile) {
+        Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edges, nodesCount, 3), "MapReduce Algorithm", graphName, outputFile);
     }
     
     public static void primitiveAdjacencyArrayBasedAlgorithms(int[][] graph, String graphName, PrintWriter outputFile) {
