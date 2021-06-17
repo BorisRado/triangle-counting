@@ -5,6 +5,11 @@ import java.util.*;
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.SparseRealMatrix;
 import org.apache.commons.math3.util.Pair;
+
+import smile.math.matrix.EVD;
+import smile.math.matrix.Lanczos;
+import smile.math.matrix.SparseMatrix;
+
 import java.lang.Math;
 import static java.lang.Math.round;
 
