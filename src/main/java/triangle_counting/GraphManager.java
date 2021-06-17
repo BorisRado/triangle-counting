@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.apache.commons.math3.linear.OpenMapRealMatrix;
 import org.apache.commons.math3.linear.SparseRealMatrix;
@@ -101,7 +103,16 @@ public class GraphManager {
         return graph;
     }
     
-    public static int[][] getPrimitiveArray(String filename, boolean isDirected) throws IOException {
+    public static Integer[][] getPrimitiveArray(String filename, boolean isDirected) throws IOException {
+        int[][] graph = getPrimitiveArrayInt(filename, isDirected);
+        Integer[][] result = Stream.of(graph)
+                .map(array -> IntStream.of(array).boxed().toArray(Integer[]::new))
+                .toArray(Integer[][]::new);
+        
+        return result;
+    }
+    
+    public static int[][] getPrimitiveArrayInt(String filename, boolean isDirected) throws IOException {
         ArrayList<Integer>[] graphArrayList = getArrayList(filename, isDirected);
         int[][] graph = new int[graphArrayList.length][];
         
@@ -126,9 +137,10 @@ public class GraphManager {
                 array[j] = tmp;
             }
         }
-        
         return graph;
     }
+    
+    
     
     public static boolean[][] getAdjacencyMatrix(String filename, boolean isDirected) throws IOException {
         GraphReader graphReader = new GraphReader(filename);

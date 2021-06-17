@@ -260,7 +260,7 @@ if __name__ == "__main__":
     plotBarChart("results.json", ["Edge iterator", "Forward algorithm",
                 "Compact Forward algorithm", "Cycle counting",
                 "Neighbour pairs - single", "Node iterator",
-                "Sparse adjacency matrix search 1"], "kao_final.png")
+                "Sparse adjacency matrix search 1"])
     # plot_wrt_n("results.json", ["Edge iterator",
     #             "Compact Forward algorithm", "Cycle counting", "Node iterator",
     #             "Neighbour pairs - single", "Sparse adjacency matrix search 1"])

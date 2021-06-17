@@ -6,9 +6,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Set;
 
-import org.apache.commons.math3.linear.OpenMapRealMatrix;
 import org.apache.commons.math3.linear.SparseRealMatrix;
-import smile.math.matrix.SparseMatrix;
 
 public class Tester {
     
@@ -57,7 +55,7 @@ public class Tester {
         System.gc();
         
         // algorithms with int[][]
-        int [][] graph_adj_matrix = GraphManager.getPrimitiveArray(absolutePath, false);
+        Integer [][] graph_adj_matrix = GraphManager.getPrimitiveArray(absolutePath, false);
         primitiveAdjacencyArrayBasedAlgorithms(graph_adj_matrix, graphName, outputFile);
         graph_adj_matrix = null;
         System.gc();
@@ -98,9 +96,9 @@ public class Tester {
         System.gc();
 
         // Algorithms with adj list (array) & set
-        graph_adj_matrix = GraphManager.getPrimitiveArray(absolutePath, false);
+        int[][] graph_adj_matrix_int = GraphManager.getPrimitiveArrayInt(absolutePath, false);
         graph_set = GraphManager.getSet(absolutePath, false);
-        randomWalkAlgorithms(graph_set, graph_adj_matrix, graphName, outputFile);
+        randomWalkAlgorithms(graph_set, graph_adj_matrix_int, graphName, outputFile);
         graph_adj_matrix = null;
         graph_set = null;
         System.gc();
@@ -114,7 +112,7 @@ public class Tester {
         Executor.execute(() -> TriangleCounter.compactForwardAlgorithm(graph), "Compact Forward algorithm", graphName, outputFile);
     }
     
-    public static void primitiveAdjacencyArrayBasedAlgorithms(int[][] graph, String graphName, PrintWriter outputFile) {
+    public static void primitiveAdjacencyArrayBasedAlgorithms(Integer[][] graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.nodeIterator(graph), "Node iterator", graphName, outputFile);
     }
     

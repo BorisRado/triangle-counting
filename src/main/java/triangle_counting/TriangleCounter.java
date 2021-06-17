@@ -5,12 +5,8 @@ import java.util.*;
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.SparseRealMatrix;
 import org.apache.commons.math3.util.Pair;
-import smile.math.matrix.EVD;
-import smile.math.matrix.SparseMatrix;
-import smile.math.matrix.Lanczos;
 import java.lang.Math;
-
-    import static java.lang.Math.round;
+import static java.lang.Math.round;
 
 public class TriangleCounter {
 
@@ -244,7 +240,7 @@ public class TriangleCounter {
         return new Long(triangleCount);
     }
     
-    public static Long nodeIterator(int[][] graph) {
+    public static Long nodeIterator(Integer[][] graph) {
         // sort edge lists for all nodes
         for (int i = 0; i < graph.length; i++)
             Arrays.parallelSort(graph[i]);
