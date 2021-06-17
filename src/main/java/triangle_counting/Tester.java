@@ -44,13 +44,13 @@ public class Tester {
         ArrayList<Integer>[] graph = GraphManager.getArrayList(absolutePath, false);
         int nodesCount = graph.length;
         writeGraphInfo(graph, graphName, outputFile);
-        adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
+        //adjacencyArrayBasedAlgorithms(graph, graphName, outputFile);
         graph = null;
         System.gc();
 
         // algorithms with Set
         Set<Integer>[] graph_set = GraphManager.getSet(absolutePath, false);
-        setBasedAlgorithms(graph_set, graphName, outputFile);
+        //setBasedAlgorithms(graph_set, graphName, outputFile);
         graph_set = null;
         System.gc();
         
@@ -91,6 +91,8 @@ public class Tester {
 
         // Algorithms with edge list
         ArrayList<int[]> graph_el = GraphManager.getEdgeList(absolutePath);
+        //streamGraphEstimateAlgorithms(graph_el, graphName, outputFile, graph.length);
+
         edgeListBasedAlgorithms(graph_el, graphName, outputFile, nodesCount);
         graph_el = null;
         System.gc();
@@ -129,7 +131,10 @@ public class Tester {
     public static void sparseAdjMatrixBasedAlgorithms(MySparseMatrix graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Sparse adjacency matrix search 1", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Cycle counting", graphName, outputFile);
-        Executor.execute(() -> TriangleCounter.eigenTriangle(graph), "Eigen estimation matrix", graphName, outputFile);
+
+        Executor.execute(() -> TriangleCounter.eigenTriangle(graph, true), "Eigen estimation matrix", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.eigenTriangle(graph, false), "Eigen estimation matrix Smile", graphName, outputFile);
+
     }
 
     public static void MiniTriAlgorithm(MySparseMatrix adjMatrix, MySparseMatrix incMatrix, String graphName, PrintWriter outputFile) {

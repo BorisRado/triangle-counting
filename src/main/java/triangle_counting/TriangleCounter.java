@@ -363,7 +363,7 @@ public class TriangleCounter {
      * @param adjMatrix SparseRealMatrix representation of adjacency matrix.
      * @return estimated number of triangles in the network
      */
-    public static Long eigenTriangle(MySparseMatrix adjMatrix) {
+    public static Long eigenTriangle(MySparseMatrix adjMatrix, boolean ourImplementation) {
         // See https://www.math.cmu.edu/~ctsourak/tsourICDM08.pdf
         // Different as in their metod where lanczos method is calculated
         // somehow on every iteration. In paper they stated
@@ -371,17 +371,18 @@ public class TriangleCounter {
 
         double[] eigenvalues;
 
-        // our implementation
-        eigenvalues = Utils.lanczosMethod(adjMatrix, 30);
+        if (ourImplementation == true){
+            // our implementation
+            eigenvalues = Utils.lanczosMethod(adjMatrix, 30);
+        } else {
+            double[] elements = new double[adjMatrix.columns.length];
+            Arrays.fill(elements, 1.0);
+            SparseMatrix g = new SparseMatrix(adjMatrix.n , adjMatrix.n , elements, adjMatrix.columns, adjMatrix.rows);
+            g.setSymmetric(true);
+            EVD eigenvaluesEVD = Lanczos.eigen(g, 30);
+            eigenvalues = eigenvaluesEVD.getEigenValues();
 
-        double[] elements = new double[adjMatrix.columns.length];
-        Arrays.fill(elements, 1.0);
-
-        //SparseMatrix g = new SparseMatrix(adjMatrix.n , adjMatrix.n , elements, adjMatrix.columns, adjMatrix.rows);
-        //g.setSymmetric(true);
-        //EVD eigenvaluesEVD = Lanczos.eigen(g, 30);
-        //eigenvalues = eigenvaluesEVD.getEigenValues();
-
+        }
 
         double tol = 0.05;
         double triangleCount = 0;
