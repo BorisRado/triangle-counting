@@ -100,6 +100,27 @@ def simplifyKronecker(G, scale):
             G1[j].add(i)
     return G1
 
+def simplifyPajek(inputFilename, outputFilename, inputFolder="data", outputFolder="data"):
+    with open(path.join(inputFolder, f"{inputFilename}.net"), "r") as f:
+        n = int(f.readline().rstrip().split()[1])
+        for _ in range(n):
+            f.readline()
+        m = int(f.readline().rstrip().split()[1])
+        edges = set()
+        for _ in range(m):
+            u,v = [int(i) for i in f.readline().split()]
+            e = (u,v) if u<v else (v,u)
+            if e in edges:
+                continue
+            edges.add(e)
+    with open(path.join(outputFolder, f"{outputFilename}.net"), "w") as f:
+        f.write(f"*vertices {n}\n")
+        for i in range(n):
+            f.write(f'{i+1} "{i+1}"\n')
+        f.write(f"*edges {len(edges)}\n")
+        for u,v in edges:
+            f.write(f"{u} {v}\n")
+
 def saveKronecker(G, scale, filename, folder="data", toSimplify=True):
     if toSimplify:
         G = simplifyKronecker(G, scale)

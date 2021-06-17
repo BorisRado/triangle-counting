@@ -43,10 +43,11 @@ public class TriangleCounter {
         Map<Integer, Integer> etas = Utils.getEtasMap(pairs);
 
         // initialize arraylists
-        ArrayList<Integer>[] A = (ArrayList<Integer>[]) new ArrayList[graph.length];
+        //ArrayList<Integer>[] A = (ArrayList<Integer>[]) new ArrayList[graph.length];
+        ArrayList<Integer>[] A = new ArrayList[graph.length];
         for (int i = 0; i < graph.length; i++) {
             A[i] = new ArrayList<>(0);
-            A[i].ensureCapacity(graph.length / 50);
+            //A[i].ensureCapacity(graph.length / 50);
         }
 
         int triangleCount = 0;
