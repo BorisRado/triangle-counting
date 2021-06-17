@@ -145,13 +145,14 @@ public class MySparseMatrix {
             end = rows[i+1];
             for (int xidx = rows[i]; xidx < end; xidx++) {
                 x = columns[xidx];
+                if (x <= i) continue;
                 for (int yidx = xidx+1; yidx < end; yidx++) {
                     y = columns[yidx];
-                    if (B[x].contains(y)) sum++;
+                    if (y > x && B[x].contains(y)) sum++;
                 }
             }
         }
-        return sum / 3;
+        return sum;
     }
 
     /**

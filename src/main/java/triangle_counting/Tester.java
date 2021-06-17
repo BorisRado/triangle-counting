@@ -50,7 +50,7 @@ public class Tester {
 
         // algorithms with Set
         Set<Integer>[] graph_set = GraphManager.getSet(absolutePath, false);
-        //setBasedAlgorithms(graph_set, graphName, outputFile);
+        setBasedAlgorithms(graph_set, graphName, outputFile);
         graph_set = null;
         System.gc();
         
@@ -125,12 +125,12 @@ public class Tester {
     
     public static void setBasedAlgorithms(Set<Integer>[] graph, String graphName, PrintWriter outputFile) {
         //Executor.execute(() -> TriangleCounter.naiveSearch(graph), "Naive search", graphName, outputFile);
-        Executor.execute(() -> TriangleCounter.edgeIterator(graph), "Edge iterator", graphName, outputFile);
-        Executor.execute(() -> TriangleCounter.neighborPairsSingle(graph), "Neighbour pairs - single", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.edgeIterator(graph), "Edge-iterator", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.neighborPairsSingle(graph), "Delegating Low-Degree Vertices", graphName, outputFile);
     }
     
     public static void sparseAdjMatrixBasedAlgorithms(MySparseMatrix graph, String graphName, PrintWriter outputFile) {
-        Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Sparse adjacency matrix search 1", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Sparse matrix with Hadamard product", graphName, outputFile);
         Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Cycle counting", graphName, outputFile);
 
         Executor.execute(() -> TriangleCounter.eigenTriangle(graph, true), "Eigen estimation matrix", graphName, outputFile);
@@ -143,7 +143,7 @@ public class Tester {
     }
 
     public static void sparseAndSetAlgorithm(MySparseMatrix graphAdj, Set<Integer>[] graphSet, String graphName, PrintWriter outputFile) {
-        Executor.execute(() -> TriangleCounter.MiniTri(graphAdj, graphSet), "Sparse + Set Algorithm", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.SparseAndSet(graphAdj, graphSet), "Sparse + Set Algorithm", graphName, outputFile);
     }
     
     public static void sparseRealMatrixBasedAlgorithms(SparseRealMatrix graph, String graphName, PrintWriter outputFile) {
@@ -163,7 +163,7 @@ public class Tester {
 
     public static void randomWalkAlgorithms(Set<Integer>[] graphSet, int[][] graphArray, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.randomWalkEstimate(graphSet, graphArray), "Random Walk Estimate", graphName, outputFile);
-        Executor.execute(() -> TriangleCounter.neighborPairsDouble(graphSet, graphArray), "Neighbour pairs - double", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.neighborPairsDouble(graphSet, graphArray), "Delegating Low-Degree Vertices Plus", graphName, outputFile);
     }
     
     private static void writeGraphInfo(ArrayList<Integer>[] graph, String graphName,  PrintWriter outputFile) {

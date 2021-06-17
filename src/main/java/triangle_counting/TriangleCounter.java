@@ -219,7 +219,7 @@ public class TriangleCounter {
     public static Long MiniTri(MySparseMatrix adjMatrix, MySparseMatrix incMatrix) { return adjMatrix.MiniTri(incMatrix); }
 
     // see https://www.osti.gov/servlets/purl/1531050
-    public static Long MiniTri(MySparseMatrix graphAdj, Set<Integer>[] graphSet) { return graphAdj.SparseAndSetAlgo(graphSet); }
+    public static Long SparseAndSet(MySparseMatrix graphAdj, Set<Integer>[] graphSet) { return graphAdj.SparseAndSetAlgo(graphSet); }
 
     // see https://iss.oden.utexas.edu/?p=projects/galois/analytics/triangle_counting
     public static Long edgeIterator(Set<Integer>[] graph) {
