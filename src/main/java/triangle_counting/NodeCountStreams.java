@@ -2,6 +2,8 @@ package triangle_counting;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.*;
 
 public class NodeCountStreams {
@@ -102,18 +104,40 @@ public class NodeCountStreams {
         return sum;
     }
 
-    public static Long mapReduceAlgorithm(ArrayList<int[]>  edgeList, int nodeCount, int par){
-        Map<String, List<FirstMap>> collected = edgeList.stream().parallel().
-                flatMap(x -> toPartitions(x, nodeCount, par).stream()).
-                collect(Collectors.groupingBy(FirstMap::getRepr));
+    public static Long mapReduceAlgorithm(ArrayList<int[]>  edgeList, int nodeCount, int par, int numOfThreads){
+        final int parallelism = numOfThreads;
+        long tris;
+        ForkJoinPool forkJoinPool = null;
+        try {
+            forkJoinPool = new ForkJoinPool(parallelism);
+
+            Map<String, List<FirstMap>> collected = forkJoinPool.submit(()->edgeList.stream().parallel().
+                    flatMap(x -> toPartitions(x, nodeCount, par).stream().parallel()).
+                    collect(Collectors.groupingBy(FirstMap::getRepr))).get();
+
+            //collected.forEach((key, value) -> System.out.format("key: %s: val: %s \n", key,value));
+            List<List<FirstMap>> graphs = new ArrayList<List<FirstMap>>(collected.values());
+
+            Double triangles = forkJoinPool.submit(()->
+                    graphs.parallelStream().map(x -> calcTriangles(x, nodeCount, par)).reduce(0.0, Double::sum, Double::sum)
+
+                    ).get();
+
+            tris = Math.round(triangles);
+
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (forkJoinPool != null) {
+                forkJoinPool.shutdown();
+            }
+        }
 
 
-        //collected.forEach((key, value) -> System.out.format("key: %s: val: %s \n", key,value));
-        List<List<FirstMap>> graphs = new ArrayList<List<FirstMap>>(collected.values());
 
-        Double triangles = graphs.parallelStream().map(x -> calcTriangles(x, nodeCount, par)).reduce(0.0, Double::sum, Double::sum);
 
-        long tris = Math.round(triangles);
+
+
 
         return tris;
     }

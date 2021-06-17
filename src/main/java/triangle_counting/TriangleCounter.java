@@ -130,15 +130,9 @@ public class TriangleCounter {
         Map<Integer, Integer> etas = Utils.getEtasMap(pairs);
 
         // sort adjacency arrays according to eta
-        pairs.forEach(p -> Collections.sort(p.getSecond(), new Comparator<Integer>() {
-            @Override
-            public int compare(Integer first, Integer second) {
-                if (etas.get(first) > etas.get(second))
-                    return 1;
-                else
-                    return -1;
-            }
-        }));
+        pairs.forEach(p -> p.getSecond().sort(Comparator.comparing(etas::get)));
+
+
 
         int triangleCount = 0;
         ArrayList<Integer[]> triangles = new ArrayList();

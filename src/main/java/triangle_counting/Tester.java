@@ -131,7 +131,7 @@ public class Tester {
     
     public static void sparseAdjMatrixBasedAlgorithms(MySparseMatrix graph, String graphName, PrintWriter outputFile) {
         Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Sparse matrix with Hadamard product", graphName, outputFile);
-        Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Cycle counting", graphName, outputFile);
+        //Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Cycle counting", graphName, outputFile);
 
         Executor.execute(() -> TriangleCounter.eigenTriangle(graph, true), "Eigen estimation matrix", graphName, outputFile);
         // Executor.execute(() -> TriangleCounter.eigenTriangle(graph, false), "Eigen estimation matrix Smile", graphName, outputFile);
@@ -157,7 +157,10 @@ public class Tester {
                 edgeList.size() / 20 : 1, edgeList.size() > 10 ? edgeList.size() / 10 : edgeList.size()),
                 "Stream Graph Estimate", graphName, outputFile);
 
-        // Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edgeList, nodeCount, 3), "MapReduce Algorithm", graphName, outputFile);
+        //Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edgeList, nodeCount, 3, 2), "MapReduce Algorithm 2", graphName, outputFile);
+        Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edgeList, nodeCount, 3, 4), "MapReduce Algorithm", graphName, outputFile);
+        //Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edgeList, nodeCount, 3, 8), "MapReduce Algorithm 8", graphName, outputFile);
+        //Executor.execute(() -> NodeCountStreams.mapReduceAlgorithm(edgeList, nodeCount, 3, 12), "MapReduce Algorithm 12", graphName, outputFile);
 
     }
 
