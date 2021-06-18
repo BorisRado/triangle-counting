@@ -6,10 +6,6 @@ import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.SparseRealMatrix;
 import org.apache.commons.math3.util.Pair;
 
-import smile.math.matrix.EVD;
-import smile.math.matrix.Lanczos;
-import smile.math.matrix.SparseMatrix;
-
 import java.lang.Math;
 import static java.lang.Math.round;
 
@@ -363,7 +359,7 @@ public class TriangleCounter {
      * @param adjMatrix SparseRealMatrix representation of adjacency matrix.
      * @return estimated number of triangles in the network
      */
-    public static Long eigenTriangle(MySparseMatrix adjMatrix, boolean ourImplementation) {
+    public static Long eigenTriangle(MySparseMatrix adjMatrix) {
         // See https://www.math.cmu.edu/~ctsourak/tsourICDM08.pdf
         // Different as in their metod where lanczos method is calculated
         // somehow on every iteration. In paper they stated
@@ -371,18 +367,19 @@ public class TriangleCounter {
 
         double[] eigenvalues;
 
-        if (ourImplementation == true){
-            // our implementation
-            eigenvalues = Utils.lanczosMethod(adjMatrix, 30);
-        } else {
-            double[] elements = new double[adjMatrix.columns.length];
-            Arrays.fill(elements, 1.0);
-            SparseMatrix g = new SparseMatrix(adjMatrix.n , adjMatrix.n , elements, adjMatrix.columns, adjMatrix.rows);
-            g.setSymmetric(true);
-            EVD eigenvaluesEVD = Lanczos.eigen(g, 30);
-            eigenvalues = eigenvaluesEVD.getEigenValues();
+        // our implementation
+        eigenvalues = Utils.lanczosMethod(adjMatrix, 50);
+        /*
+        used for temporary checking of other lanczos methods
+        double[] elements = new double[adjMatrix.columns.length];
+        Arrays.fill(elements, 1.0);
+        SparseMatrix g = new SparseMatrix(adjMatrix.n , adjMatrix.n , elements, adjMatrix.columns, adjMatrix.rows);
+        g.setSymmetric(true);
+        EVD eigenvaluesEVD = Lanczos.eigen(g, 30);
+        eigenvalues = eigenvaluesEVD.getEigenValues();
+        */
 
-        }
+
 
         double tol = 0.05;
         double triangleCount = 0;

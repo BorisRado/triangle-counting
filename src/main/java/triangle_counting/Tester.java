@@ -133,7 +133,7 @@ public class Tester {
         Executor.execute(() -> TriangleCounter.adjMatrixCounting(graph), "Sparse matrix with Hadamard product", graphName, outputFile);
         //Executor.execute(() -> TriangleCounter.cycleCounting(graph), "Cycle counting", graphName, outputFile);
 
-        Executor.execute(() -> TriangleCounter.eigenTriangle(graph, true), "Eigen estimation matrix", graphName, outputFile);
+        Executor.execute(() -> TriangleCounter.eigenTriangle(graph), "Eigen estimation matrix", graphName, outputFile);
         // Executor.execute(() -> TriangleCounter.eigenTriangle(graph, false), "Eigen estimation matrix Smile", graphName, outputFile);
 
     }
