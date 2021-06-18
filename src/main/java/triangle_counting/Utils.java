@@ -175,4 +175,9 @@ public class Utils {
         return mean;
     }
 
+    public static int log2(int n) {
+        double x = Math.log(n) / Math.log(2);
+        return (int)Math.round(x);
+    }
+
 }
